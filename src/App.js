@@ -11,6 +11,7 @@ import Login from 'pages/Login';
 import SignUpEmail from 'pages/SignUp/Email';
 import SignUpWallet from 'pages/SignUp/Wallet';
 import Home from 'pages/Home';
+import Post from 'pages/Post';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/signup/email" element={<SignUpEmail />} />
             <Route path="/signup/wallet" element={<SignUpWallet />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/post" element={<Post />} />
           </Routes>
         </Layout>
       </BrowserRouter>
