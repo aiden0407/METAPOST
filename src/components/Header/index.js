@@ -84,8 +84,8 @@ function Header() {
       {
         isToggleOpened &&
         <ToggleMenu>
-          <StyledText B1 medium color={COLOR.N700}>My Profile</StyledText>
-          <StyledText B1 medium color={COLOR.N700}>Community Ranking</StyledText>
+          <StyledText B1 medium color={COLOR.N700} onClick={() => navigate('/profile')}>My Profile</StyledText>
+          <StyledText B1 medium color={COLOR.N700} onClick={() => navigate('/community')}>Community Ranking</StyledText>
           <StyledText B1 medium color={COLOR.N700} onClick={() => handleLogOut()}>Log out</StyledText>
         </ToggleMenu>
       }
