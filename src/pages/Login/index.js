@@ -1,16 +1,180 @@
 //React
-import React, { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+//Components
+import { COLOR } from 'constants/design';
+import { Text } from 'components/Text';
+import { Image } from 'components/Image';
+import { BorderInput } from 'components/TextInput';
+import { Row, FlexBox, DividingLine } from 'components/Flex';
+
+//Assets
+import etherium from 'assets/icons/Etherium.svg';
+import metaMask from 'assets/icons/MetaMask.svg';
+import coinbase from 'assets/icons/Coinbase.svg';
+import walletConnect from 'assets/icons/WalletConnect.svg';
 
 function Login() {
 
   const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isWalletClicked, setIsWalletClicked] = useState(false);
+
+  function handleSignIn() {
+    dispatch({
+      type: 'LOGIN',
+    });
+    localStorage.setItem('login', true);
+    navigate('/home');
+  }
+
+  function handleWalletClick() {
+    setIsWalletClicked(true);
+  }
+
+  function handleNavigateSignUpWallet() {
+    navigate('/signup/wallet');
+  }
+
+  function handleNavigateSignUpEmail() {
+    navigate('/signup/email');
+  }
 
   return (
-    <div class="loginContainer">
-      <p class="loginTitle">Health-tomize</p>
-    </div>
+    <LoginContainer>
+      <Text H3 bold>Welcome !</Text>
+
+      <Text H5 medium color={COLOR.N700} marginTop={40}>E-mail</Text>
+      <BorderInput
+        type="text"
+        placeholder="your@example.com"
+        value={email}
+        onChange={(event) => {
+          setEmail(event.target.value);
+        }}
+        marginTop={8}
+      />
+      <Text H5 medium color={COLOR.N700} marginTop={16}>Password</Text>
+      <BorderInput
+        type="text"
+        placeholder="your password"
+        value={password}
+        onChange={(event) => {
+          setPassword(event.target.value);
+        }}
+        marginTop={8}
+      />
+
+      <Row marginTop={24}>
+        <CheckBox type="checkbox" />
+        <Text H5 medium color={COLOR.N700} marginLeft={8}>Remember me</Text>
+        <FlexBox />
+        <SignInButton onClick={() => handleSignIn()}>
+          <Text B0 medium color={COLOR.BLUE1}>Sign in</Text>
+        </SignInButton>
+      </Row>
+
+      <DividingLine marginTop={25} />
+
+      {
+        isWalletClicked
+          ? <ToggleMenu>
+            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+              <Image src={metaMask} width={24} />
+              <Text B1 medium marginLeft={8}>MetaMask</Text>
+            </StyledRow>
+            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+              <Image src={coinbase} width={24} />
+              <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
+            </StyledRow>
+            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+              <Image src={walletConnect} width={24} />
+              <Text B1 medium marginLeft={8}>WalletConnect</Text>
+            </StyledRow>
+          </ToggleMenu>
+          : <ConnectWalletButton onClick={() => handleWalletClick()}>
+            <Row>
+              <Image src={etherium} width={20} />
+              <Text H5 bold color="#FFFFFF" marginLeft={4}>Connect with Wallet</Text>
+            </Row>
+          </ConnectWalletButton>
+      }
+
+      <Row marginTop={24}>
+        <StyledText B1 medium color={COLOR.N700}>Forgot password?</StyledText>
+        <FlexBox />
+        <Text B1 medium color={COLOR.N700}>Need an account?</Text>
+        <StyledText B1 medium color={COLOR.BLUE1} marginLeft={6} onClick={() => handleNavigateSignUpEmail()}>Sign up</StyledText>
+      </Row>
+
+    </LoginContainer>
   );
 }
 
 export default Login;
+
+const LoginContainer = styled.div`
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+`
+
+const CheckBox = styled.input.attrs({ type: 'checkbox' })`
+  width: 20px;
+  height: 20px;
+  border: 4px solid ${COLOR.N600};
+  border-radius: 4px;
+  cursor: pointer;
+`
+
+const SignInButton = styled.div`
+  width: 98px;
+  height: 40px;
+  border-radius: 6px;
+  background: ${COLOR.N400};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const ConnectWalletButton = styled.div`
+  margin-top: 24px;
+  width: 100%;
+  height: 48px;
+  border-radius: 4px;
+  background: ${COLOR.BLUE1};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const ToggleMenu = styled.div`
+  margin-top: 24px;
+  width: 100%;
+  height: 144px;
+  padding: 12px 16px;
+  background-color: #FFFFFF;
+  border: 1px solid ${COLOR.N400};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const StyledRow = styled(Row)`
+  cursor: pointer;
+`
+
+const StyledText = styled(Text)`
+  cursor: pointer;
+  border-bottom: 1px solid ;
+`
