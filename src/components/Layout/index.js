@@ -25,6 +25,7 @@ function Layout({ children }) {
   const handleFooter = (value) => {
     switch (value) {
       case '/home':
+      case '/post':
         return true;
 
       default:
