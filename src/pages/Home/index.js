@@ -1,6 +1,5 @@
 //React
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 //Components
@@ -24,7 +23,6 @@ import iconExample3 from 'assets/icons/icon_example_3.png';
 
 function Home() {
 
-  const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState('HOT');
   const [pageIndex, setPageIndex] = useState(1);
 
@@ -60,58 +58,63 @@ function Home() {
 
         <ContentsWrapper>
           <Post
+            postId={"1"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
             nftName={"Bored Ape Yacht Club #3261"}
             title={"글 제목 입니다."}
-            like={32}
-            dislike={8}
-            comments={6}
+            long={32}
+            short={8}
+            comment={6}
             communityName={"Community name"}
             createdAt={"2023-07-22T16:48:00Z"}
           />
           <Post
+            postId={"2"}
             profileImage={iconExample1}
             userId={"Rhoncus"}
             nftName={"NFT name"}
             title={"글 제목 입니다."}
             image={iconExample3}
-            like={32}
-            dislike={8}
-            comments={6}
+            long={32}
+            short={8}
+            comment={6}
             communityName={"Community name"}
             createdAt={"2023-07-19T16:48:00Z"}
           />
           <Post
+            postId={"3"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
             nftName={"Bored Ape Yacht Club #3261"}
             title={"글 제목 입니다."}
-            like={32}
-            dislike={8}
-            comments={6}
+            long={32}
+            short={8}
+            comment={6}
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
           <Post
+            postId={"4"}
             profileImage={defaultProfile}
             userId={"ReallyGood"}
             nftName={"Bored Ape Yacht Club #3261"}
             title={"글 제목 입니다."}
-            like={32}
-            dislike={8}
-            comments={6}
+            long={32}
+            short={8}
+            comment={6}
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
           <Post
+            postId={"5"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
             nftName={"Bored Ape Yacht Club #3261"}
             title={"글 제목 입니다."}
-            like={32}
-            dislike={8}
-            comments={6}
+            long={32}
+            short={8}
+            comment={6}
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
