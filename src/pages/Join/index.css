@@ -1,0 +1,128 @@
+.joinContainer {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 0;
+    gap: 50px;
+}
+
+.joinInputContainer {
+    width: 740px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.joinRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-weight: 800;
+    font-size: 20px;
+    gap: 10px;
+}
+
+.joinButtonRow {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.joinOptionButton {
+    width: 240px;
+    height: 50px;
+    background: #FAF8F8;
+    border: none;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 20px;    
+    color: #000000;
+}
+.joinOptionButton.selected {
+    background: #518EFF;  
+    color: #FFFFFF;
+}
+
+.pwPattern {
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #4B4B4B;
+}
+
+.joinInputContainerName {
+    margin-left: 10px;
+    font-weight: 800;
+    font-size: 24px;
+    color: #4B4B4B;
+}
+
+.joinInputContainer input {
+    margin-top: 10px;
+    width: 700px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background: #FAF8F8;
+    font-size: 16px;
+    text-align: center;
+}
+
+.joinButton {
+    margin-top: 30px;
+    width: 300px;
+    height: 50px;
+    border-radius: 30px;
+    background: #516EFF;
+    color: #fff;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+@media (max-width: 768px) {
+    .joinContainer {
+        padding: 60px 20;
+        gap: 30px;
+    }
+    
+    .joinInputContainer {
+        width: 330px;
+    }
+    
+    .joinRow {
+        font-size: 12px;
+    }
+    
+    .joinOptionButton {
+        width: 120px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    .pwPattern {
+        font-size: 12px;
+    }
+    
+    .joinInputContainerName {
+        font-size: 18px;
+    }
+    
+    .joinInputContainer input {
+        width: 300px;
+        font-size: 12px;
+    }
+    
+    .joinButton {
+        width: 240px;
+        height: 40px;
+        font-size: 14px;
+    }
+}

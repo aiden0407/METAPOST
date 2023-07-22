@@ -1,0 +1,171 @@
+.foodContainer {
+    width: 100vw;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    text-align: center;
+}
+
+.foodTitle {
+    font-weight: 700;
+    font-size: 64px;
+}
+
+.foodSubtitle {
+    margin: 0px 60px;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 40px;
+    color: #9C9C9C;
+}
+
+.foodHomeButton {
+    width: 170px;
+    height: 40px;
+    border-radius: 30px;
+    background: #FFD700;
+    color: #fff;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+#food-1 {
+    width: 100%;
+    height: 100%;
+    gap: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#food-2 {
+    width: 100%;
+    height: 100%;
+    gap: 100px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#food-3 {
+    width: 100%;
+    height: 100%;
+    gap: 60px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.foodTextLarge {
+    font-weight: 700;
+    font-size: 28px;
+    margin: 0 20px;
+    color: #FFD700;
+}
+
+.foodTextMedium {
+    font-weight: 700;
+    font-size: 20px;
+    color: #4B4B4B;
+}
+
+.foodCategory {
+    width: 180px;
+    height: 25px;
+    padding: 10px 0 0 0;
+    background: #FCFCFC;
+    border: 1px solid #9C9C9C;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #9C9C9C;
+}
+
+.resultBox {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.selectRow {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.selectRow select {
+    height: 40px;
+}
+
+.selectRow input {
+    width: 350px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: #FAF8F8;
+    font-size: 16px;
+    text-align: center;
+}
+
+.foodResultRow {
+    width: 420px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .foodContainer {
+        height: calc(100vh - 60px);
+        gap: 60px;
+    }
+
+    .foodTitle {
+        font-size: 32px;
+    }
+
+    .foodSubtitle {
+        margin: 0px 20px;
+        font-size: 20px;
+        line-height: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .selectRow select {
+        width: 240px;
+    }
+    
+    .selectRow input {
+        width: 200px;
+    }
+
+    .foodTextMedium {
+        font-size: 16px;
+    }
+
+    .foodCategory {
+        width: 140px;
+        height: 25px;
+    }
+
+    .foodResultRow {
+        width: 340px;
+    }
+}
