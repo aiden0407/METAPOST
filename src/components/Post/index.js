@@ -1,4 +1,5 @@
 //React
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -9,11 +10,13 @@ import { Row, Column, FlexBox } from 'components/Flex';
 
 //Assets
 import nft from 'assets/icons/nft.png';
-import long from 'assets/icons/long.svg';
-import short from 'assets/icons/short.svg';
-import comment from 'assets/icons/comment.svg';
+import longIcon from 'assets/icons/long.svg';
+import shortIcon from 'assets/icons/short.svg';
+import commentIcon from 'assets/icons/comment.svg';
 
-function Post({ profileImage, userId, nftName, title, image, like, dislike, comments, communityName, createdAt }) {
+function Post({ postId, profileImage, userId, nftName, title, image, long, short, comment, communityName, createdAt }) {
+
+    const navigate = useNavigate();
 
     function getTimeDifference(time) {
         const currentDate = new Date();
@@ -38,7 +41,7 @@ function Post({ profileImage, userId, nftName, title, image, like, dislike, comm
     }
 
     return (
-        <PostBox>
+        <PostBox onClick={() => navigate(`/post?postId=${postId}`)}>
             <Row>
                 <Image src={profileImage} width={33} borderRadius="4px" />
                 <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
@@ -61,16 +64,16 @@ function Post({ profileImage, userId, nftName, title, image, like, dislike, comm
 
             <Row marginTop={10} gap={8}>
                 <IconBox>
-                    <Image src={long} width={12} />
-                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{like}</Text>
+                    <Image src={longIcon} width={12} />
+                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{long}</Text>
                 </IconBox>
                 <IconBox>
-                    <Image src={short} width={12} />
-                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{dislike}</Text>
+                    <Image src={shortIcon} width={12} />
+                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{short}</Text>
                 </IconBox>
                 <IconBox>
-                    <Image src={comment} width={12} />
-                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{comments}</Text>
+                    <Image src={commentIcon} width={12} />
+                    <Text B3 medium color={COLOR.N700} marginLeft={2}>{comment}</Text>
                 </IconBox>
                 <Text B3 medium color={COLOR.N600}>{communityName}</Text>
             </Row>
