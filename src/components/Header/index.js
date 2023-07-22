@@ -62,6 +62,16 @@ function Header() {
     setIsToggleOpened(!isToggleOpened);
   }
 
+  function handleMyProfile() {
+    setIsToggleOpened(false);
+    navigate('/profile')
+  }
+
+  function handleCommunity() {
+    setIsToggleOpened(false);
+    navigate('/community')
+  }
+
   function handleLogOut() {
     localStorage.removeItem('login');
     dispatch({ type: 'LOGOUT' });
@@ -84,8 +94,8 @@ function Header() {
       {
         isToggleOpened &&
         <ToggleMenu>
-          <StyledText B1 medium color={COLOR.N700} onClick={() => navigate('/profile')}>My Profile</StyledText>
-          <StyledText B1 medium color={COLOR.N700} onClick={() => navigate('/community')}>Community Ranking</StyledText>
+          <StyledText B1 medium color={COLOR.N700} onClick={() => handleMyProfile()}>My Profile</StyledText>
+          <StyledText B1 medium color={COLOR.N700} onClick={() => handleCommunity()}>Community Ranking</StyledText>
           <StyledText B1 medium color={COLOR.N700} onClick={() => handleLogOut()}>Log out</StyledText>
         </ToggleMenu>
       }
