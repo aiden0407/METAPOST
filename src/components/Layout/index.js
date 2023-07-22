@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 //Components
 import Header from 'components/Header';
+import Footer from 'components/Footer';
 
 function Layout({ children }) {
 
@@ -21,6 +22,16 @@ function Layout({ children }) {
     }
   };
 
+  const handleFooter = (value) => {
+    switch (value) {
+      case '/home':
+        return true;
+
+      default:
+        return false;
+    }
+  };
+
   return (
     <Container backgroundColor={handleChangeColor(location.pathname)}>
       <HeaderContainer>
@@ -30,6 +41,13 @@ function Layout({ children }) {
       <BodyWrapper>
         {children}
       </BodyWrapper>
+
+      {
+        handleFooter(location.pathname)
+        && <FooterContainer>
+          <Footer />
+        </FooterContainer>
+      }
     </Container>
   )
 }
@@ -52,7 +70,7 @@ const HeaderContainer = styled.header`
   background: #FFFFFF;
   display: flex;
   justify-content: center;
-  position: fixed !important;
+  position: fixed;
   top: 0;
   z-index: 1;
 `
@@ -65,4 +83,13 @@ const BodyWrapper = styled.div`
   min-height: calc(100vh - 48px);
   display: flex;
   flex-flow: column;
+`
+
+const FooterContainer = styled.footer`
+  margin-top: 64px;
+  width: 100%;
+  height: 270px;
+  background: #FFFFFF;
+  display: flex;
+  justify-content: center;
 `
