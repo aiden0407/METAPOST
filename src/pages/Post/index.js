@@ -190,4 +190,5 @@ const LongShortButton = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
 `
