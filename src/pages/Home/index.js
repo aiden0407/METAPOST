@@ -1,5 +1,5 @@
 //React
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 //Components
@@ -25,9 +25,38 @@ function Home() {
 
   const [activeButton, setActiveButton] = useState('HOT');
   const [pageIndex, setPageIndex] = useState(1);
+  const [showButton, setShowButton] = useState(true);
+
+  console.log(showButton)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // 페이지 스크롤 위치를 확인하여 버튼의 표시 여부를 결정
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      if (windowHeight - scrollY < 270) {
+        setShowButton(false);
+      } else {
+        setShowButton(true);
+      }
+    };
+
+    // 스크롤 이벤트를 리스닝
+    window.addEventListener('scroll', handleScroll);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <HomeContainer>
+      <WriteButton show={showButton}>
+
+      </WriteButton>
+
       <RatioParent>
         <RatioChild>
           <Image src={mainBanner1} style={{ width: '100%', height: '100%', zIndex: 1 }} />
@@ -118,7 +147,6 @@ function Home() {
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
-
         </ContentsWrapper>
 
         <Row marginTop={24} gap={8} style={{ width: "100%", justifyContent: "center" }}>
@@ -157,6 +185,23 @@ const HomeContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`
+
+const WriteButton = styled.div`
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 50px;
+  height: 50px;
+  background-color: ${COLOR.RED1};
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1;
+  opacity: ${props => (props.show ? 1 : 0)};
+  transition: opacity 0.3s ease;
 `
 
 const RatioParent = styled.div`
