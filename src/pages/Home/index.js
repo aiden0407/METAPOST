@@ -11,13 +11,14 @@ import { Row } from 'components/Flex';
 import Preview from 'components/Preview';
 
 //Assets
-import mainBanner1 from 'assets/images/main_banner1.png';
-import fireActive from 'assets/icons/fire_active.svg';
-import followInactive from 'assets/icons/follow_inactive.svg';
-import newInactive from 'assets/icons/new_inactive.svg';
+import fireActiveIcon from 'assets/icons/fire_active.svg';
+import fireInactiveIcon from 'assets/icons/fire_inactive.svg';
+import followInactiveIcon from 'assets/icons/follow_inactive.svg';
+import newInactiveIcon from 'assets/icons/new_inactive.svg';
 import arrowNext from 'assets/icons/arrow_next.svg';
 import writeIcon from 'assets/icons/write.svg';
 
+import mainBanner1 from 'assets/images/main_banner1.png';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
 import iconExample1 from 'assets/icons/icon_example_1.png';
 import iconExample2 from 'assets/icons/icon_example_2.png';
@@ -71,19 +72,19 @@ function Home() {
         <Row gap={4}>
           <MenuButton active={activeButton === 'HOT'} onClick={() => setActiveButton('HOT')}>
             <Row>
-              <Image src={fireActive} width={14} />
+              <Image src={activeButton === 'HOT' ? fireActiveIcon : fireInactiveIcon} width={14} />
               <Text B1 bold color={activeButton === 'HOT' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
             </Row>
           </MenuButton>
           <MenuButton active={activeButton === 'FOLLOW'} onClick={() => setActiveButton('FOLLOW')}>
             <Row>
-              <Image src={followInactive} width={14} />
+              <Image src={followInactiveIcon} width={14} />
               <Text B1 bold color={activeButton === 'FOLLOW' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
             </Row>
           </MenuButton>
           <MenuButton active={activeButton === 'NEW'} onClick={() => setActiveButton('NEW')}>
             <Row>
-              <Image src={newInactive} width={14} />
+              <Image src={newInactiveIcon} width={14} />
               <Text B1 bold color={activeButton === 'NEW' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NEW</Text>
             </Row>
           </MenuButton>
