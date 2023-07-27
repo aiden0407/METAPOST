@@ -1,5 +1,6 @@
 //React
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { AppContext } from 'context/AppContext';
 import styled from 'styled-components';
 
 //Components
@@ -7,20 +8,17 @@ import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
+import Comment from 'components/Comment';
 
 //Assets
 import nft from 'assets/icons/nft.png';
+import reportIcon from 'assets/icons/report.svg';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
-import commentIcon from 'assets/icons/comment.svg';
+import commentIcon from 'assets/icons/comment_black.svg';
+import imageIcon from 'assets/icons/image.svg';
 
-import mainBanner1 from 'assets/images/main_banner1.png';
-import fireActive from 'assets/icons/fire_active.svg';
-import followInactive from 'assets/icons/follow_inactive.svg';
-import newInactive from 'assets/icons/new_inactive.svg';
-import arrowNext from 'assets/icons/arrow_next.svg';
-
-import defaultProfile from 'assets/icons/default_profile.png';
+//import defaultProfile from 'assets/icons/default_profile.png';
 import iconExample1 from 'assets/icons/icon_example_1.png';
 import iconExample2 from 'assets/icons/icon_example_2.png';
 import iconExample3 from 'assets/icons/icon_example_3.png';
@@ -51,7 +49,10 @@ function Post() {
       communityName: "Community name"
     }
   }
+  const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState(postDetailExample);
+  const [writtenComment, setWrittenComment] = useState('');
+  
 
   function formatDateTime(dateTimeString) {
     const formattedDate = new Date(dateTimeString).toLocaleString("en-US", {
@@ -85,6 +86,10 @@ function Post() {
     }
   }
 
+  function handleReport(item) {
+    dispatch({ type: 'OPEN_REPORT_POPUP' });
+  }
+
   if (!postDetail) {
     return null;
   }
@@ -105,6 +110,7 @@ function Post() {
           <Text B3 color={COLOR.N600}>{formatDateTime(postDetail.fields.created_at)}</Text>
           <FlexBox />
           <Text B2 color={COLOR.N600}>{formatNumber(postDetail.fields.view)}&nbsp;views</Text>
+          <StyledImage src={reportIcon} width={16} marginLeft={8} onClick={()=>handleReport()} />
         </Row>
 
         <Row marginTop={18} style={{ width: "100%" }}>
@@ -137,6 +143,53 @@ function Post() {
         </Row>
       </ContentBox>
 
+      <CommentBox>
+        <Row>
+          <Image src={commentIcon} width={16} />
+          <Text B2 medium color={COLOR.N800} marginLeft={8}>All Commnet</Text>
+          <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.fields.comment}</Text>
+        </Row>
+
+        <CommentWriteBox>
+          <CommentInput
+            value={writtenComment}
+            onChange={(e) => setWrittenComment(e.target.value)}
+          />
+
+          <Row marginTop={8}>
+            <PostImageButton>
+              <Image src={imageIcon} width={16} />
+            </PostImageButton>
+            <FlexBox />
+            <PostButton>
+              <Text B2 medium color={COLOR.N700}>Comment</Text>
+            </PostButton>
+          </Row>
+        </CommentWriteBox>
+
+        <CommentWrittenBox>
+          <Comment
+            profileImage={iconExample2}
+            userId={"JunGGu"}
+            nftName={"Bored Ape Yacht Club #3261"}
+            text={"찬성합니다."}
+            like={32}
+            dislike={8}
+            createdAt={"2023-07-26T16:48:00Z"}
+          />
+          <Comment
+            profileImage={iconExample2}
+            userId={"User name"}
+            nftName={"NFT name"}
+            text={"반대합니다."}
+            image={iconExample3}
+            like={32}
+            dislike={8}
+            createdAt={"2023-07-22T16:48:00Z"}
+          />
+        </CommentWrittenBox>
+
+      </CommentBox>
     </PostContainer>
   );
 }
@@ -190,5 +243,68 @@ const LongShortButton = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
+`
+
+const CommentBox = styled.div`
+  width: 100%;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+`
+
+const CommentWriteBox = styled.div`
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+`
+
+const CommentInput = styled.textarea`
+  width: 100%;
+  height: 62px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid ${COLOR.N400};
+  font-size: 14px;
+  line-height: 150%;
+  font-family: Pretendard;
+	box-sizing: border-box;
+`
+
+const PostImageButton = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
+  border: 1px solid ${COLOR.N400};
+  background-color: ${COLOR.N200};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`
+
+const PostButton = styled.div`
+  padding: 8.5px 18px;
+  border-radius: 2px;
+  border: 1px solid ${COLOR.N400};
+  background-color: ${COLOR.N200};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`
+
+const CommentWrittenBox = styled.div`
+  margin-top: 8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`
+
+const StyledImage = styled(Image)`
   cursor: pointer;
 `
