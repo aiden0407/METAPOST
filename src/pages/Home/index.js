@@ -1,5 +1,6 @@
 //React
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -15,6 +16,7 @@ import fireActive from 'assets/icons/fire_active.svg';
 import followInactive from 'assets/icons/follow_inactive.svg';
 import newInactive from 'assets/icons/new_inactive.svg';
 import arrowNext from 'assets/icons/arrow_next.svg';
+import writeIcon from 'assets/icons/write.svg';
 
 import defaultProfile from 'assets/icons/default_profile.png';
 import iconExample1 from 'assets/icons/icon_example_1.png';
@@ -23,6 +25,7 @@ import iconExample3 from 'assets/icons/icon_example_3.png';
 
 function Home() {
 
+  const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState('HOT');
   const [pageIndex, setPageIndex] = useState(1);
   const [showButton, setShowButton] = useState(true);
@@ -51,8 +54,8 @@ function Home() {
 
   return (
     <HomeContainer>
-      <WriteButton show={showButton}>
-
+      <WriteButton show={showButton} onClick={() => navigate(`/write`)}>
+        <Image src={writeIcon} width={24} />
       </WriteButton>
 
       <RatioParent>
