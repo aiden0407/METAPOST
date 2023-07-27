@@ -1,14 +1,18 @@
 //React
+import { useContext } from 'react';
+import { AppContext } from 'context/AppContext';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
 import Header from 'components/Header';
 import Footer from 'components/Footer';
+import ReportPopup from 'components/Popup/ReportPopup';
 
 function Layout({ children }) {
 
   const location = useLocation();
+  const { state: { isReportPopupOpened } } = useContext(AppContext);
 
   const handleChangeColor = (value) => {
     switch (value) {
@@ -34,22 +38,28 @@ function Layout({ children }) {
   };
 
   return (
-    <Container backgroundColor={handleChangeColor(location.pathname)}>
-      <HeaderContainer>
-        <Header />
-      </HeaderContainer>
+    <>
+      <Container backgroundColor={handleChangeColor(location.pathname)}>
+        <HeaderContainer>
+          <Header />
+        </HeaderContainer>
 
-      <BodyWrapper>
-        {children}
-      </BodyWrapper>
+        <BodyWrapper>
+          {children}
+        </BodyWrapper>
+
+        {
+          handleFooter(location.pathname)
+          && <FooterContainer>
+            <Footer />
+          </FooterContainer>
+        }
+      </Container>
 
       {
-        handleFooter(location.pathname)
-        && <FooterContainer>
-          <Footer />
-        </FooterContainer>
+        isReportPopupOpened && <ReportPopup />
       }
-    </Container>
+    </>
   )
 }
 
@@ -73,6 +83,7 @@ const HeaderContainer = styled.header`
   justify-content: center;
   position: fixed;
   top: 0;
+  left: 0;
   z-index: 1;
 `
 
