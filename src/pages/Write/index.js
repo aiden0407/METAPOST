@@ -239,7 +239,6 @@ const PostContentInput = styled.textarea`
   height: 480px;
   padding: 12px;
   background-color:${COLOR.N400};
-  border: none;
   border-radius: 4px;
   font-size: 15px;
 `

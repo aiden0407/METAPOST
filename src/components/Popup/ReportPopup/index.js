@@ -145,7 +145,6 @@ const ReportContentInput = styled.textarea`
   height: 285px;
   padding: 12px;
   background-color:${COLOR.N400};
-  border: none;
   border-radius: 4px;
   font-size: 14px;
 `
