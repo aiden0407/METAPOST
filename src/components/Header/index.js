@@ -11,7 +11,7 @@ import { FlexBox } from 'components/Flex';
 
 //Assets
 import mainLogo from 'assets/icons/main_logo.svg';
-import search from 'assets/icons/search.svg';
+import searchIcon from 'assets/icons/search.svg';
 import iconExample1 from 'assets/icons/icon_example_1.png';
 
 function Header() {
@@ -55,6 +55,11 @@ function Header() {
     }
   }
 
+  function handleNavigateSearch() {
+    navigate('/search');
+    window.scrollTo({ top: 0 });
+  }
+
   function handleNavigateJoin() {
     navigate('/');
   }
@@ -86,7 +91,7 @@ function Header() {
     <HeaderWrapper>
       <HeaderLogo src={mainLogo} onClick={() => handleNavigateHome()} />
       <FlexBox />
-      <SearchIcon src={search} />
+      <SearchIcon src={searchIcon} onClick={() => handleNavigateSearch()} />
       {
         login
           ? <ProfileIcon src={iconExample1} onClick={() => handleTogglOpen()} />
