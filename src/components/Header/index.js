@@ -44,7 +44,7 @@ function Header() {
         }
         break;
     }
-  }, [location.pathname]);
+  }, [location.pathname, dispatch, navigate]);
 
   function handleNavigateHome() {
     if (login) {

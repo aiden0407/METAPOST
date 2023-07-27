@@ -9,12 +9,11 @@ import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { BorderInput } from 'components/TextInput';
-import { Row, RelativeWrapper } from 'components/Flex';
+import { Row } from 'components/Flex';
 
 //Assets
 import defaultProfile from 'assets/icons/default_profile.png';
 import nft from 'assets/icons/nft.png';
-import wallet from 'assets/icons/wallet.svg';
 import copy from 'assets/icons/copy.svg';
 import profile from 'assets/icons/profile.svg';
 
@@ -101,39 +100,6 @@ const LoginContainer = styled.div`
   flex-direction: column;
 `
 
-const IndexIconFilled = styled.div`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: ${COLOR.BLUE1};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const IndexIcon = styled.div`
-  margin-left: 8px;
-  width: 20px;
-  height: 20px;
-  border: 1px solid ${COLOR.N600};
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const SamllButton = styled.div`
-  margin-left: 8px;
-  width: 80px;
-  height: 48px;
-  border-radius: 6px;
-  background-color: ${COLOR.N400};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`;
-
 const NextButton = styled.div`
   margin-top: 40px;
   width: 100%;
@@ -169,24 +135,6 @@ const WalletAdressBox = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
-const ToggleMenu = styled.div`
-  margin-top: 8px;
-  width: 100%;
-  height: 144px;
-  padding: 12px 16px;
-  background-color: #FFFFFF;
-  border: 1px solid ${COLOR.N400};
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const StyledRow = styled(Row)`
-  cursor: pointer;
-`
 
 const ProfileImageSelectBox = styled.div`
   margin-top: 8px;

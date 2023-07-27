@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
-import { Row, Column, FlexBox } from 'components/Flex';
+import { Row } from 'components/Flex';
 
 //Assets
 import arrowUp from 'assets/icons/arrow_up.svg';
