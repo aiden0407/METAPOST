@@ -270,9 +270,6 @@ const CommentInput = styled.textarea`
   border-radius: 4px;
   border: 1px solid ${COLOR.N400};
   font-size: 14px;
-  line-height: 150%;
-  font-family: Pretendard;
-	box-sizing: border-box;
 `
 
 const PostImageButton = styled.div`

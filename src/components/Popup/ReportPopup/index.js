@@ -148,9 +148,6 @@ const ReportContentInput = styled.textarea`
   border: none;
   border-radius: 4px;
   font-size: 14px;
-  line-height: 150%;
-  font-family: Pretendard;
-	box-sizing: border-box;
 `
 
 const SubmitButton = styled.div`
