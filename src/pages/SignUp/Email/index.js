@@ -83,7 +83,7 @@ function SignUpEmail() {
                   setEmail(event.target.value);
                 }}
               />
-              <SamllButton><Text B1 medium color={COLOR.N800}>Send</Text></SamllButton>
+              <SmallButton><Text B1 medium color={COLOR.N800}>Send</Text></SmallButton>
             </Row>
 
             <Text B1 medium color={COLOR.N700} marginTop={24}>Confirm Code</Text>
@@ -96,7 +96,7 @@ function SignUpEmail() {
                   setCode(event.target.value);
                 }}
               />
-              <SamllButton><Text B1 medium color={COLOR.N800}>Done</Text></SamllButton>
+              <SmallButton><Text B1 medium color={COLOR.N800}>Done</Text></SmallButton>
             </Row>
 
             <Text B1 medium color={COLOR.N700} marginTop={24}>Password</Text>
@@ -224,9 +224,9 @@ const IndexIcon = styled.div`
   align-items: center;
 `
 
-const SamllButton = styled.div`
+const SmallButton = styled.div`
   margin-left: 8px;
-  width: 80px;
+  width: 117px; //width: 80px; 하면 제대로 적용 안됨
   height: 48px;
   border-radius: 6px;
   background-color: ${COLOR.N400};
