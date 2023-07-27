@@ -28,12 +28,13 @@ function Layout({ children }) {
 
   const handleFooter = (value) => {
     switch (value) {
-      case '/home':
-      case '/post':
-        return true;
+      case '/':
+      case '/signup/email':
+      case '/signup/wallet':
+        return false;
 
       default:
-        return false;
+        return true;
     }
   };
 
