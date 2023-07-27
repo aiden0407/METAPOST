@@ -12,10 +12,11 @@ import { BorderInput } from 'components/TextInput';
 import { Row } from 'components/Flex';
 
 //Assets
-import defaultProfile from 'assets/icons/default_profile.png';
-import nft from 'assets/icons/nft.png';
-import copy from 'assets/icons/copy.svg';
-import profile from 'assets/icons/profile.svg';
+import copyIcon from 'assets/icons/copy.svg';
+import profileIcon from 'assets/icons/profile.svg';
+
+import defaultProfile from 'assets/icons/icon_default_profile.png';
+import nftIcon from 'assets/icons/icon_nft.png';
 
 function SignUpEmail() {
 
@@ -52,7 +53,7 @@ function SignUpEmail() {
       <WalletAdressBox>
         <Row>
           <Text B1 medium color={COLOR.N700}>0x12r45... 6HJ9</Text>
-          <StyledImage src={copy} width={16} marginLeft={8} />
+          <StyledImage src={copyIcon} width={16} marginLeft={8} />
         </Row>
       </WalletAdressBox>
 
@@ -69,10 +70,10 @@ function SignUpEmail() {
 
       <Row marginTop={16}>
         <Text B1 medium color={COLOR.N700}>Profile Image</Text>
-        <Image src={nft} width={20} marginLeft={6} />
+        <Image src={nftIcon} width={20} marginLeft={6} />
       </Row>
       <ProfileImageSelectBox>
-        <Image src={profile} width={24} />
+        <Image src={profileIcon} width={24} />
         <Text B1 center color={COLOR.N700} marginTop={8}>You don’t have any NFTs in your wallet.</Text>
       </ProfileImageSelectBox>
 

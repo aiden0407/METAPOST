@@ -9,7 +9,7 @@ import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
 
 //Assets
-import nft from 'assets/icons/nft.png';
+import nftIcon from 'assets/icons/icon_nft.png';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment.svg';
@@ -41,7 +41,10 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
     }
 
     return (
-        <PostBox onClick={() => navigate(`/post?postId=${postId}`)}>
+        <PostBox onClick={() => {
+            navigate(`/post?postId=${postId}`);
+            window.scrollTo({ top: 0 });
+        }}>
             <Row>
                 <Image src={profileImage} width={33} borderRadius="4px" />
                 <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
@@ -51,7 +54,7 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
                         <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
                     </Row>
                     <Row>
-                        <Image src={nft} width={16} />
+                        <Image src={nftIcon} width={16} />
                         <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
                     </Row>
                 </Column>

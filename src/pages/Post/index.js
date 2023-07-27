@@ -11,14 +11,13 @@ import { Row, Column, FlexBox } from 'components/Flex';
 import Comment from 'components/Comment';
 
 //Assets
-import nft from 'assets/icons/nft.png';
+import nftIcon from 'assets/icons/icon_nft.png';
 import reportIcon from 'assets/icons/report.svg';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment_black.svg';
 import imageIcon from 'assets/icons/image.svg';
 
-//import defaultProfile from 'assets/icons/default_profile.png';
 import iconExample1 from 'assets/icons/icon_example_1.png';
 import iconExample2 from 'assets/icons/icon_example_2.png';
 import iconExample3 from 'assets/icons/icon_example_3.png';
@@ -118,7 +117,7 @@ function Post() {
           <Column marginLeft={8} gap={4}>
             <Text B2 medium color={COLOR.N700}>{postDetail.fields.userId}</Text>
             <Row>
-              <Image src={nft} width={16} />
+              <Image src={nftIcon} width={16} />
               <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.fields.nftName}</Text>
             </Row>
           </Column>

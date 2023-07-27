@@ -12,14 +12,15 @@ import { BorderInput } from 'components/TextInput';
 import { Row, RelativeWrapper } from 'components/Flex';
 
 //Assets
-import arrowNext from 'assets/icons/arrow_next.svg';
-import passwordEye from 'assets/icons/password_eye.svg';
-import defaultProfile from 'assets/icons/default_profile.png';
-import metaMask from 'assets/icons/MetaMask.svg';
-import coinbase from 'assets/icons/Coinbase.svg';
-import walletConnect from 'assets/icons/WalletConnect.svg';
-import nft from 'assets/icons/nft.png';
-import wallet from 'assets/icons/wallet.svg';
+import arrowNextIcon from 'assets/icons/arrow_next.svg';
+import passwordEyeIcon from 'assets/icons/password_eye.svg';
+import walletIcon from 'assets/icons/wallet.svg';
+
+import defaultProfile from 'assets/icons/icon_default_profile.png';
+import metaMaskIcon from 'assets/icons/icon_metamask.png';
+import coinbaseIcon from 'assets/icons/icon_coinbase.png';
+import walletConnectIcon from 'assets/icons/icon_walletconnect.png';
+import nftIcon from 'assets/icons/icon_nft.png';
 
 function SignUpEmail() {
 
@@ -60,7 +61,7 @@ function SignUpEmail() {
       <Row marginTop={16}>
         <IndexIconFilled><Text B1 medium color="#FFFFFF">1</Text></IndexIconFilled>
         <Text B1 medium color={COLOR.N700} marginLeft={8}>Basic info</Text>
-        <Image src={arrowNext} width={20} marginLeft={8} />
+        <Image src={arrowNextIcon} width={20} marginLeft={8} />
         {
           step === 'Basic info'
             ? <IndexIcon><Text B1 medium color={COLOR.N600}>2</Text></IndexIcon>
@@ -108,7 +109,7 @@ function SignUpEmail() {
                 }}
                 marginTop={8}
               />
-              <StyledImage src={passwordEye} width={24} onClick={() => setShowPassword(!showPassword)} />
+              <StyledImage src={passwordEyeIcon} width={24} onClick={() => setShowPassword(!showPassword)} />
             </RelativeWrapper>
 
             <Text B1 medium color={COLOR.N700} marginTop={24}>Confirm Password</Text>
@@ -121,7 +122,7 @@ function SignUpEmail() {
                 }}
                 marginTop={8}
               />
-              <StyledImage src={passwordEye} width={24} onClick={() => setShowPasswordConfirm(!showPasswordConfirm)} />
+              <StyledImage src={passwordEyeIcon} width={24} onClick={() => setShowPasswordConfirm(!showPasswordConfirm)} />
             </RelativeWrapper>
 
             <NextButton onClick={() => handleContinue()}>
@@ -139,15 +140,15 @@ function SignUpEmail() {
               isWalletClicked
                 ? <ToggleMenu>
                   <StyledRow onClick={() => handleConnectWallet()}>
-                    <Image src={metaMask} width={24} />
+                    <Image src={metaMaskIcon} width={24} />
                     <Text B1 medium marginLeft={8}>MetaMask</Text>
                   </StyledRow>
                   <StyledRow onClick={() => handleConnectWallet()}>
-                    <Image src={coinbase} width={24} />
+                    <Image src={coinbaseIcon} width={24} />
                     <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
                   </StyledRow>
                   <StyledRow onClick={() => handleConnectWallet()}>
-                    <Image src={walletConnect} width={24} />
+                    <Image src={walletConnectIcon} width={24} />
                     <Text B1 medium marginLeft={8}>WalletConnect</Text>
                   </StyledRow>
                 </ToggleMenu>
@@ -169,10 +170,10 @@ function SignUpEmail() {
 
             <Row marginTop={16}>
               <Text B1 medium color={COLOR.N700}>Profile Image</Text>
-              <Image src={nft} width={20} marginLeft={6} />
+              <Image src={nftIcon} width={20} marginLeft={6} />
             </Row>
             <ProfileImageSelectBox>
-              <Image src={wallet} width={24} />
+              <Image src={walletIcon} width={24} />
               <Text B1 center color={COLOR.N700} marginTop={8}>Please connect your NFT wallet{'\n'}and make it a profile image.</Text>
             </ProfileImageSelectBox>
 

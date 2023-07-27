@@ -12,10 +12,10 @@ import { BorderInput } from 'components/TextInput';
 import { Row, FlexBox, DividingLine } from 'components/Flex';
 
 //Assets
-import etherium from 'assets/icons/Etherium.svg';
-import metaMask from 'assets/icons/MetaMask.svg';
-import coinbase from 'assets/icons/Coinbase.svg';
-import walletConnect from 'assets/icons/WalletConnect.svg';
+import etheriumIcon from 'assets/icons/icno_etherium.png';
+import metaMaskIcon from 'assets/icons/icon_metamask.png';
+import coinbaseIcon from 'assets/icons/icon_coinbase.png';
+import walletConnectIcon from 'assets/icons/icon_walletconnect.png';
 
 function Login() {
 
@@ -85,21 +85,21 @@ function Login() {
         isWalletClicked
           ? <ToggleMenu>
             <StyledRow onClick={() => handleNavigateSignUpWallet()}>
-              <Image src={metaMask} width={24} />
+              <Image src={metaMaskIcon} width={24} />
               <Text B1 medium marginLeft={8}>MetaMask</Text>
             </StyledRow>
             <StyledRow onClick={() => handleNavigateSignUpWallet()}>
-              <Image src={coinbase} width={24} />
+              <Image src={coinbaseIcon} width={24} />
               <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
             </StyledRow>
             <StyledRow onClick={() => handleNavigateSignUpWallet()}>
-              <Image src={walletConnect} width={24} />
+              <Image src={walletConnectIcon} width={24} />
               <Text B1 medium marginLeft={8}>WalletConnect</Text>
             </StyledRow>
           </ToggleMenu>
           : <ConnectWalletButton onClick={() => handleWalletClick()}>
             <Row>
-              <Image src={etherium} width={20} />
+              <Image src={etheriumIcon} width={20} />
               <Text H5 bold color="#FFFFFF" marginLeft={4}>Connect with Wallet</Text>
             </Row>
           </ConnectWalletButton>

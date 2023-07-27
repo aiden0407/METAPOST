@@ -10,7 +10,7 @@ import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
 
 //Assets
-import nft from 'assets/icons/nft.png';
+import nftIcon from 'assets/icons/icon_nft.png';
 import likeIcon from 'assets/icons/like.svg';
 //import likeColorIcon from 'assets/icons/like_color.svg';
 import dislikeIcon from 'assets/icons/dislike.svg';
@@ -59,7 +59,7 @@ function Comment({ profileImage, userId, nftName, text, image, like, dislike, cr
                         <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
                     </Row>
                     <Row>
-                        <Image src={nft} width={16} />
+                        <Image src={nftIcon} width={16} />
                         <Text B3 medium color={COLOR.N600} marginLeft={4}>{nftName}</Text>
                     </Row>
                 </Column>

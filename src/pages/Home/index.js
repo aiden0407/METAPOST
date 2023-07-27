@@ -18,7 +18,7 @@ import newInactive from 'assets/icons/new_inactive.svg';
 import arrowNext from 'assets/icons/arrow_next.svg';
 import writeIcon from 'assets/icons/write.svg';
 
-import defaultProfile from 'assets/icons/default_profile.png';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 import iconExample1 from 'assets/icons/icon_example_1.png';
 import iconExample2 from 'assets/icons/icon_example_2.png';
 import iconExample3 from 'assets/icons/icon_example_3.png';
@@ -54,7 +54,10 @@ function Home() {
 
   return (
     <HomeContainer>
-      <WriteButton show={showButton} onClick={() => navigate(`/write`)}>
+      <WriteButton show={showButton} onClick={() => {
+        navigate(`/write`);
+        window.scrollTo({ top: 0 });
+      }}>
         <Image src={writeIcon} width={24} />
       </WriteButton>
 
