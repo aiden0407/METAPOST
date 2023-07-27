@@ -14,7 +14,7 @@ import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment.svg';
 
-function Post({ postId, profileImage, userId, nftName, title, image, long, short, comment, communityName, createdAt }) {
+function Preview({ postId, profileImage, userId, nftName, title, image, long, short, comment, communityName, createdAt }) {
 
     const navigate = useNavigate();
 
@@ -81,7 +81,7 @@ function Post({ postId, profileImage, userId, nftName, title, image, long, short
     )
 }
 
-export default Post
+export default Preview
 
 const PostBox = styled.div`
   width: 100%;
