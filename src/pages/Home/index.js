@@ -7,7 +7,7 @@ import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row } from 'components/Flex';
-import Post from 'components/Post';
+import Preview from 'components/Preview';
 
 //Assets
 import mainBanner1 from 'assets/images/main_banner1.png';
@@ -26,8 +26,6 @@ function Home() {
   const [activeButton, setActiveButton] = useState('HOT');
   const [pageIndex, setPageIndex] = useState(1);
   const [showButton, setShowButton] = useState(true);
-
-  console.log(showButton)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +84,7 @@ function Home() {
         </Row>
 
         <ContentsWrapper>
-          <Post
+          <Preview
             postId={"1"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
@@ -98,7 +96,7 @@ function Home() {
             communityName={"Community name"}
             createdAt={"2023-07-22T16:48:00Z"}
           />
-          <Post
+          <Preview
             postId={"2"}
             profileImage={iconExample1}
             userId={"Rhoncus"}
@@ -111,7 +109,7 @@ function Home() {
             communityName={"Community name"}
             createdAt={"2023-07-19T16:48:00Z"}
           />
-          <Post
+          <Preview
             postId={"3"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
@@ -123,7 +121,7 @@ function Home() {
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
-          <Post
+          <Preview
             postId={"4"}
             profileImage={defaultProfile}
             userId={"ReallyGood"}
@@ -135,7 +133,7 @@ function Home() {
             communityName={"Community name"}
             createdAt={"2023-07-16T16:48:00Z"}
           />
-          <Post
+          <Preview
             postId={"5"}
             profileImage={iconExample2}
             userId={"ReallyGood"}
