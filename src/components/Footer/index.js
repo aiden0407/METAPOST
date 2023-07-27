@@ -88,6 +88,6 @@ const StyledRow = styled(Row)`
 
 const StyledImage = styled(Image)`
     position: absolute; 
-    bottom: 24px;
+    bottom: 16px;
     right: 24px;
 `
