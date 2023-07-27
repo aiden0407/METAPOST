@@ -24,14 +24,19 @@ function Footer() {
         });
     }
 
+    function handleNavigate(route) {
+        navigate(`/${route}`);
+        window.scrollTo({ top: 0 });
+    }
+
     return (
         <FooterWrapper>
-            <StyledText B2 medium color={COLOR.N700} onClick={() => navigate('/home')}>Home</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => navigate('/notice')}>Notice</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => navigate('/suggestion')}>Suggestion</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => navigate('/policy')}>Policy</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => navigate('/terms')}>Terms of Service</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => navigate('/contact')}>Contact</StyledText>
+            <StyledText B2 medium color={COLOR.N700} onClick={() => handleNavigate('home')}>Home</StyledText>
+            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('notice')}>Notice</StyledText>
+            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('suggestion')}>Suggestion</StyledText>
+            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('policy')}>Policy</StyledText>
+            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('terms')}>Terms of Service</StyledText>
+            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('contact')}>Contact</StyledText>
 
             <BackToTopButton onClick={() => handleBackToTop()}>
                 <Image src={arrowUp} width={16} />
