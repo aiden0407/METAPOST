@@ -49,6 +49,7 @@ function Header() {
   function handleNavigateHome() {
     if (login) {
       navigate('/home');
+      window.scrollTo({ top: 0 });
     } else {
       navigate('/');
     }
@@ -65,11 +66,13 @@ function Header() {
   function handleMyProfile() {
     setIsToggleOpened(false);
     navigate('/profile')
+    window.scrollTo({ top: 0 });
   }
 
   function handleCommunity() {
     setIsToggleOpened(false);
     navigate('/community/ranking')
+    window.scrollTo({ top: 0 });
   }
 
   function handleLogOut() {
