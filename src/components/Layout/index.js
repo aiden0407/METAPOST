@@ -31,6 +31,7 @@ function Layout({ children }) {
       case '/':
       case '/signup/email':
       case '/signup/wallet':
+      case '/profile/settings':
         return false;
 
       default:
