@@ -69,7 +69,7 @@ function Header() {
 
   function handleCommunity() {
     setIsToggleOpened(false);
-    navigate('/community')
+    navigate('/community/ranking')
   }
 
   function handleLogOut() {
