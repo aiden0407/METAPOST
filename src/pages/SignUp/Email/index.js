@@ -44,6 +44,7 @@ function SignUpEmail() {
   const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [walletAdress, setWalletAdress] = useState();
   const [nftId, setNftId] = useState();
+  const [agreePolicy, setAgreePolicy] = useState(false);
 
   const handleEmailAuthSend = async function () {
     if(email.length){
@@ -95,6 +96,16 @@ function SignUpEmail() {
   }
 
   const handleDone = async function () {
+    if(!userName.length){
+      alert('Please enter your nickname');
+      return ;
+    }
+
+    if(!agreePolicy){
+      alert('You did not agree to the terms and conditions');
+      return ;
+    }
+
     try {
       const nicknameAlreadyUsed = await checkUserNameAvailability();
   
@@ -108,6 +119,8 @@ function SignUpEmail() {
         sessionStorage.setItem('loginData', JSON.stringify(response.data));
         
         navigate('/', { replace: true });
+        window.scrollTo({ top: 0 });
+
       } else {
         alert('The user name is already in use');
       }
@@ -245,10 +258,22 @@ function SignUpEmail() {
 
             <CenterWrapper>
             <Row marginTop={8}>
-              <CheckBox type="checkbox" />
-              <Text B1 medium color={COLOR.N700} marginLeft={8}>I agree to the&nbsp;</Text>
-              <StyledText B1 medium color={COLOR.N700}>Terms and Conditions</StyledText>
-            </Row>
+                <CheckBox
+                  type="checkbox"
+                  checked={agreePolicy}
+                  onChange={(event) => {
+                    setAgreePolicy(event.target.checked);
+                  }}
+                />
+                <Text B1 medium color={COLOR.N700} marginLeft={8}>I agree to the&nbsp;</Text>
+                <StyledText B1 medium color={COLOR.N700}
+                  onClick={() => {
+                    window.open('/terms', '_blank');
+                  }}
+                >
+                  Terms and Conditions
+                </StyledText>
+              </Row>
             </CenterWrapper>
 
             <NextButton onClick={() => handleDone()}>
@@ -381,6 +406,6 @@ const CheckBox = styled.input.attrs({ type: 'checkbox' })`
 `
 
 const StyledText = styled(Text)`
-  cursor: pointer;
   border-bottom: 1px solid ;
+  cursor: pointer;
 `
