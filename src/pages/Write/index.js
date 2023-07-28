@@ -1,12 +1,18 @@
 //React
-import { useState } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
+import { AuthContext } from 'context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
 import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
-import { Row, FlexBox } from 'components/Flex';
+import { Row, FlexBox, Box } from 'components/Flex';
+
+//Api
+import { writePost } from 'apis/Home';
+import { getCommunityList } from 'apis/Community';
 
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
@@ -15,102 +21,122 @@ import alignCenterIcon from 'assets/icons/align_center.svg';
 import imageIcon from 'assets/icons/image.svg';
 import youtubeIcon from 'assets/icons/youtube.svg';
 import emojiIcon from 'assets/icons/emoji.svg';
-
-import iconExample1 from 'assets/icons/icon_example_1.png';
-import iconExample2 from 'assets/icons/icon_example_2.png';
-import iconExample3 from 'assets/icons/icon_example_3.png';
-import iconExample4 from 'assets/icons/icon_example_4.png';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Write() {
 
+  const navigate = useNavigate();
+  const { state: { loginData } } = useContext(AuthContext);
+  const [communityData, setCommunityData] = useState();
   const [isToggleOpened, setIsToggleOpened] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('Clone X');
-  const [selectedOptionImage, setSelectedOptionImage] = useState(iconExample4);
+  const [selectedCommunity, setSelectedCommunity] = useState();
+  const [isNoticeChecked, setNoticeChecked] = useState(false);
   const [title, setTitle] = useState('');
-  const [optionIndex, setOptionIndex] = useState(0);
-  const [postContent, setPostContent] = useState('');
+  const [alignOption, setAlignOption] = useState('left');
+  const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    if(loginData){
+      initWrite();
+    }
+  }, [loginData]);
+
+  const initWrite = async function () {
+    try {
+      const response = await getCommunityList(loginData.token.access);
+      setCommunityData(response.data);
+      if(response.data.length){
+        setSelectedCommunity(response.data[0]);
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+  
+  const handleDone = async function () {
+    if (!title.length) {
+      alert('Title field is empty');
+      return;
+    }
+
+    if (!description.length) {
+      alert('Description field is empty');
+      return;
+    }
+
+    try {
+      await writePost(loginData.token.access, selectedCommunity?.pk, (isNoticeChecked?'notice':'normal'), title, description, null);
+      navigate('/');
+      window.scrollTo({ top: 0 });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleImageError = (error) => {
+    error.target.src = defaultProfile;
+  }
 
   return (
     <WriteContainer>
-      <ToggleButton onClick={() => setIsToggleOpened(!isToggleOpened)}>
-        <Image src={selectedOptionImage} width={24} />
-        <Text B3 medium color={COLOR.N1000} marginLeft={8}>{selectedOption}</Text>
+      <ToggleButton onClick={() => {
+        if(communityData?.length){
+          setIsToggleOpened(!isToggleOpened)
+        }
+      }}>
+        {
+          selectedCommunity
+          ?<Image src={selectedCommunity.fields?.logo_url} width={24} onError={handleImageError} />
+          :<Box width={24} height={24} />
+        }
+        {
+          communityData?.length 
+          ? <Text B3 medium color={COLOR.N1000} marginLeft={8}>{selectedCommunity?.fields?.title ?? 'None'}</Text>
+          : <Text B3 medium color={COLOR.N600} marginLeft={8}>Community not found</Text>
+        }
         <FlexBox />
-        <Image src={arrowNextIcon} width={24} style={{ transform: "rotate(90deg)" }} />
+        {
+          communityData?.length 
+          ? <Image src={arrowNextIcon} width={24} style={{ transform: "rotate(90deg)" }} />
+          : null
+        }
         {
           isToggleOpened
           && <ToggleMenu>
-            <StyledRow onClick={() => {
-              setSelectedOption('Clone X');
-              setSelectedOptionImage(iconExample4);
+            <StyledRow
+             onClick={() => {
+              setSelectedCommunity();
               setIsToggleOpened(!isToggleOpened);
             }}>
-              <Image src={iconExample4} width={24} />
-              <Text B3 medium color={selectedOption === 'Clone X' ? '#000000' : COLOR.N700} marginLeft={8}>Clone X</Text>
+              <Box width={24} height={24} />
+              <Text B3 medium color={selectedCommunity?.fields?.title ? COLOR.N700 : '#000000'} marginLeft={8}>None</Text>
             </StyledRow>
 
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name1');
-              setSelectedOptionImage(iconExample1);
-              setIsToggleOpened(!isToggleOpened);
+            {communityData.map((item) =>
+            <StyledRow
+              key={`community_${item.pk}`}
+              onClick={() => {
+                setSelectedCommunity(item);
+                setIsToggleOpened(!isToggleOpened);
             }}>
-              <Image src={iconExample1} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name1' ? '#000000' : COLOR.N700} marginLeft={8}>Community name1</Text>
-            </StyledRow>
-
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name2');
-              setSelectedOptionImage(iconExample2);
-              setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={iconExample2} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name2' ? '#000000' : COLOR.N700} marginLeft={8}>Community name2</Text>
-            </StyledRow>
-
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name3');
-              setSelectedOptionImage(iconExample3);
-              setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={iconExample3} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name3' ? '#000000' : COLOR.N700} marginLeft={8}>Community name3</Text>
-            </StyledRow>
-
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name4');
-              setSelectedOptionImage(iconExample1);
-              setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={iconExample1} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name4' ? '#000000' : COLOR.N700} marginLeft={8}>Community name4</Text>
-            </StyledRow>
-
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name5');
-              setSelectedOptionImage(iconExample2);
-              setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={iconExample2} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name5' ? '#000000' : COLOR.N700} marginLeft={8}>Community name5</Text>
-            </StyledRow>
-
-            <StyledRow onClick={() => {
-              setSelectedOption('Community name6');
-              setSelectedOptionImage(iconExample3);
-              setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={iconExample3} width={24} />
-              <Text B3 medium color={selectedOption === 'Community name6' ? '#000000' : COLOR.N700} marginLeft={8}>Community name6</Text>
-            </StyledRow>
+              <Image src={item?.fields?.logo_url} width={24} height={24} onError={handleImageError} />
+              <Text B3 medium color={selectedCommunity?.fields?.title === item.fields.title ? '#000000' : COLOR.N700} marginLeft={8}>{item.fields.title}</Text>
+            </StyledRow>)
+          }
           </ToggleMenu>
         }
       </ToggleButton>
 
       <WriteBox>
-        <NoticeRow>
-          <CheckBox />
+        {/* <NoticeRow>
+          <CheckBox
+            checked={isNoticeChecked}
+            onChange={(event) => {
+              setNoticeChecked(event.target.checked);
+            }}
+          />
           <Text B1 medium color={COLOR.N1000} marginLeft={8}>Notice</Text>
-        </NoticeRow>
+        </NoticeRow> */}
 
         <TitleInput
           type="text"
@@ -122,10 +148,10 @@ function Write() {
         />
 
         <Row gap={8}>
-          <OptionButton on={optionIndex === 0} onClick={() => setOptionIndex(0)}>
+          <OptionButton on={alignOption === 'left'} onClick={() => setAlignOption('left')}>
             <Image src={alignLeftColorIcon} width={20} />
           </OptionButton>
-          <OptionButton on={optionIndex === 1} onClick={() => setOptionIndex(1)}>
+          <OptionButton on={alignOption === 'center'} onClick={() => setAlignOption('center')}>
             <Image src={alignCenterIcon} width={20} />
           </OptionButton>
           <OptionButton>
@@ -139,14 +165,15 @@ function Write() {
           </OptionButton>
         </Row>
 
-        <PostContentInput
-          value={postContent}
-          onChange={(e) => setPostContent(e.target.value)}
+        <DescriptionInput
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder='Please enter details.'
+          style={{ textAlign: `${alignOption}` }}
         />
       </WriteBox>
 
-      <DoneButton>
+      <DoneButton onClick={()=>handleDone()}>
         <Text H5 bold color="#FFFFFF">Done</Text>
       </DoneButton>
     </WriteContainer>
@@ -232,9 +259,10 @@ const OptionButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `
 
-const PostContentInput = styled.textarea`
+const DescriptionInput = styled.textarea`
   width: 100%;
   height: 480px;
   padding: 12px;
