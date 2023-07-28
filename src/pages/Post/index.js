@@ -1,6 +1,8 @@
 //React
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { AppContext } from 'context/AppContext';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -10,6 +12,9 @@ import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
 import Comment from 'components/Comment';
 
+//Api
+import { getPostDetail, postComment, uploadImage } from 'apis/Home';
+
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
 import reportIcon from 'assets/icons/report.svg';
@@ -18,40 +23,32 @@ import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment_black.svg';
 import imageIcon from 'assets/icons/image.svg';
 
-import iconExample1 from 'assets/icons/icon_example_1.png';
-import iconExample2 from 'assets/icons/icon_example_2.png';
-import iconExample3 from 'assets/icons/icon_example_3.png';
-
 function Post() {
 
-  const postDetailExample = {
-    "model": "post.post",
-    "pk": 3,
-    "fields": {
-      "title": "test post2 UPDATE",
-      "description": "test description",
-      "type": "normal",
-      "user_id": 2,
-      "community_id": 1,
-      "created_at": "2023-07-19T13:48:00Z",
-      "updated_at": "2023-07-19T16:48:00Z",
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const postId = searchParams.get('post_id');
 
-      profileImage: iconExample1,
-      userId: "Rhoncus",
-      nftName: "NFT name",
-      image: iconExample3,
-      text: "Lorem ipsum dolor sit amet consectetur. Sit ut nisl eu commodo id imperdiet augue mi nisi. Placerat in vehicula neque lacus. Amet duis vel praesent suscipit urna malesuada velit aenean fringilla. Dictum sit id senectus urna cursus fringilla id congue diam. In cursus in eget sit eu urna. Ultricies consequat at dictum pellentesque tortor. Eget mauris elit faucibus et in. Sit tortor netus mi imperdiet. In nunc duis volutpat eu ipsum scelerisque vestibulum aliquet cursus. Sed semper aliquam est nulla tellus massa sed. Sit tortor consequat egestas sed diam dolor eu tellus. Nulla pellentesque viverra arcu vitae blandit dui. Porttitor mi ultricies arcu tortor sit. gravida senectus",
-      long: 32,
-      short: 8,
-      comment: 6,
-      view: 1562,
-      communityName: "Community name"
-    }
-  }
+  const { state: { loginData } } = useContext(AuthContext);
   const { dispatch } = useContext(AppContext);
-  const [postDetail, setPostDetail] = useState(postDetailExample);
-  const [writtenComment, setWrittenComment] = useState('');
-  
+  const [postDetail, setPostDetail] = useState();
+  const [comment, setComment] = useState('');
+  const [mediaUrl, setMediaUrl] = useState();
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    initPostDetail();
+  }, []);
+
+  const initPostDetail = async function () {
+    try {
+      const response = await getPostDetail(postId);
+      response.data.comments.reverse();
+      setPostDetail(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   function formatDateTime(dateTimeString) {
     const formattedDate = new Date(dateTimeString).toLocaleString("en-US", {
@@ -85,8 +82,49 @@ function Post() {
     }
   }
 
-  function handleReport(item) {
-    dispatch({ type: 'OPEN_REPORT_POPUP' });
+  const handlePostComment = async function (commentId) {
+    if(loginData){
+      try {
+        await postComment(loginData.token.access, postId, commentId, comment, mediaUrl);
+        const response = await getPostDetail(postId);
+        response.data.comments.reverse();
+        setPostDetail(response.data);
+        setComment('');
+      } catch (error) {
+        alert(error);
+      }
+    } else {
+      alert('You need to login');
+    }
+  };
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      handlePostCommentImage(file);
+    }
+  };
+
+  const handlePostCommentImage = async function (file) {
+    if(loginData){
+      try {
+        const response = await uploadImage(loginData.token.access, 'comment', file);
+        setMediaUrl(response.data);
+      } catch (error) {
+        alert(error);
+      }
+    } else {
+      alert('You need to login');
+    }
+  };
+
+  function handleReport() {
+    dispatch({
+      type: 'OPEN_REPORT_POPUP',
+      subject: 'post',
+      id: postId
+    });
   }
 
   if (!postDetail) {
@@ -96,48 +134,48 @@ function Post() {
   return (
     <PostContainer>
       <CommunityBox>
-        <Image src={postDetail.fields.profileImage} width={16} borderRadius="2px" />
-        <Text B3 medium color={COLOR.N700} marginLeft={8}>{postDetail.fields.communityName}</Text>
+        <Image src={postDetail.detail[0]?.community_image} width={16} borderRadius="2px" />
+        <Text B3 medium color={COLOR.N700} marginLeft={8}>{postDetail.detail[0].community_title}</Text>
       </CommunityBox>
 
       <TitleBox>
-        <Text H5 bold color={COLOR.N900}>{postDetail.fields.title}</Text>
+        <Text H5 bold color={COLOR.N900}>{postDetail.detail[0].title}</Text>
       </TitleBox>
 
       <ContentBox>
         <Row style={{ width: "100%" }}>
-          <Text B3 color={COLOR.N600}>{formatDateTime(postDetail.fields.created_at)}</Text>
+          <Text B3 color={COLOR.N600}>{formatDateTime(postDetail.detail[0].created_at)}</Text>
           <FlexBox />
-          <Text B2 color={COLOR.N600}>{formatNumber(postDetail.fields.view)}&nbsp;views</Text>
+          <Text B2 color={COLOR.N600}>{formatNumber(postDetail.detail[0]?.view ?? 0)}&nbsp;views</Text>
           <StyledImage src={reportIcon} width={16} marginLeft={8} onClick={()=>handleReport()} />
         </Row>
 
         <Row marginTop={18} style={{ width: "100%" }}>
-          <Image src={postDetail.fields.profileImage} width={33} borderRadius="4px" />
+          <Image src={postDetail.detail[0]?.nft_thumbnail} width={33} borderRadius="4px" />
           <Column marginLeft={8} gap={4}>
-            <Text B2 medium color={COLOR.N700}>{postDetail.fields.userId}</Text>
+            <Text B2 medium color={COLOR.N700}>{postDetail.detail[0].nickname}</Text>
             <Row>
               <Image src={nftIcon} width={16} />
-              <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.fields.nftName}</Text>
+              <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.detail[0].nft_title}</Text>
             </Row>
           </Column>
         </Row>
 
         {
-          postDetail.fields.image && <Image src={postDetail.fields.image} style={{ width: "100%" }} borderRadius="6px" marginTop={16} />
+          postDetail.detail[0]?.image && <Image src={postDetail.detail[0].image} style={{ width: "100%" }} borderRadius="6px" marginTop={16} />
         }
-        <Text B0 color={COLOR.N800} marginTop={16}>{postDetail.fields.text}</Text>
+        <Text B0 color={COLOR.N800} marginTop={16}>{postDetail.detail[0]?.description}</Text>
 
         <Row marginTop={48} gap={8} style={{ width: "100%", justifyContent: "center" }}>
           <LongShortButton>
             <Image src={longIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Long</Text>
-            <Text B2 medium color={COLOR.N600}>{postDetail.fields.long}</Text>
+            <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].liked_count}</Text>
           </LongShortButton>
           <LongShortButton>
             <Image src={shortIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Short</Text>
-            <Text B2 medium color={COLOR.N600}>{postDetail.fields.short}</Text>
+            <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].disliked_count}</Text>
           </LongShortButton>
         </Row>
       </ContentBox>
@@ -146,46 +184,49 @@ function Post() {
         <Row>
           <Image src={commentIcon} width={16} />
           <Text B2 medium color={COLOR.N800} marginLeft={8}>All Commnet</Text>
-          <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.fields.comment}</Text>
+          <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.comments.length}</Text>
         </Row>
 
         <CommentWriteBox>
           <CommentInput
-            value={writtenComment}
-            onChange={(e) => setWrittenComment(e.target.value)}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           />
 
           <Row marginTop={8}>
-            <PostImageButton>
+            <PostImageButton onClick={() => fileInputRef.current.click()}>
+              <FileInput
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileInputChange}
+              />
               <Image src={imageIcon} width={16} />
             </PostImageButton>
             <FlexBox />
-            <PostButton>
+            <PostButton onClick={()=>handlePostComment()}>
               <Text B2 medium color={COLOR.N700}>Comment</Text>
             </PostButton>
           </Row>
         </CommentWriteBox>
 
         <CommentWrittenBox>
-          <Comment
-            profileImage={iconExample2}
-            userId={"JunGGu"}
-            nftName={"Bored Ape Yacht Club #3261"}
-            text={"찬성합니다."}
-            like={32}
-            dislike={8}
-            createdAt={"2023-07-26T16:48:00Z"}
-          />
-          <Comment
-            profileImage={iconExample2}
-            userId={"User name"}
-            nftName={"NFT name"}
-            text={"반대합니다."}
-            image={iconExample3}
-            like={32}
-            dislike={8}
-            createdAt={"2023-07-22T16:48:00Z"}
-          />
+          {
+            postDetail.comments.map((item) =>
+              <Comment
+                key={`comment_${item.id}`}
+                postId={postId}
+                commentId={item.id}
+                profileImage={item.nft_thumbnail}
+                userId={item.nickname}
+                nftName={item.nft_title}
+                text={item.text}
+                image={item.media_url}
+                like={item?.liked_count ?? 0}
+                dislike={item?.disliked_count ?? 0}
+                createdAt={item.created_at}
+                depth={item.depth}
+              />)
+          }
         </CommentWrittenBox>
 
       </CommentBox>
@@ -300,6 +341,10 @@ const CommentWrittenBox = styled.div`
   display: flex;
   flex-direction: column;
 `
+
+const FileInput = styled.input`
+  display: none;
+`;
 
 const StyledImage = styled(Image)`
   cursor: pointer;
