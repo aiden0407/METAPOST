@@ -13,6 +13,7 @@ import nftIcon from 'assets/icons/icon_nft.png';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment.svg';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Preview({ postId, profileImage, userId, nftName, title, image, long, short, comment, communityName, createdAt }) {
 
@@ -46,7 +47,7 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
             window.scrollTo({ top: 0 });
         }}>
             <Row>
-                <Image src={profileImage} width={33} borderRadius="4px" />
+                <Image src={profileImage ?? defaultProfile} width={33} borderRadius="4px" />
                 <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
                     <Row style={{ width: "100%" }}>
                         <Text B2 medium color={COLOR.N700}>{userId}</Text>
