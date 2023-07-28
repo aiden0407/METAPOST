@@ -11,6 +11,9 @@ import { Image } from 'components/Image';
 import { BorderInput } from 'components/TextInput';
 import { Row, FlexBox, DividingLine } from 'components/Flex';
 
+//Api
+import { loginByEmail } from 'apis/Login';
+
 //Assets
 import etheriumIcon from 'assets/icons/icno_etherium.png';
 import metaMaskIcon from 'assets/icons/icon_metamask.png';
@@ -23,14 +26,39 @@ function Login() {
   const { dispatch } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
 
-  function handleSignIn() {
-    dispatch({
-      type: 'LOGIN',
-    });
-    localStorage.setItem('login', true);
-    navigate('/home');
+  const handleSignIn = async function () {
+
+    if(!email.length){
+      alert('Email field is empty');
+      return ;
+    }
+
+    if(!password.length){
+      alert('Password field is empty');
+      return ;
+    }
+
+    try {
+      const response = await loginByEmail(email, password);
+      dispatch({
+        type: 'LOGIN',
+        loginData: response.data
+      });
+
+      if(isRememberChecked){
+        localStorage.setItem('loginData', JSON.stringify(response.data));
+      } else {
+        sessionStorage.setItem('loginData', JSON.stringify(response.data));
+      }
+      
+      navigate('/home');
+
+    } catch (error) {
+      alert(error.실패);
+    }
   }
 
   function handleWalletClick() {
@@ -61,7 +89,7 @@ function Login() {
       />
       <Text H5 medium color={COLOR.N700} marginTop={16}>Password</Text>
       <BorderInput
-        type="text"
+        type="password"
         placeholder="your password"
         value={password}
         onChange={(event) => {
@@ -71,7 +99,13 @@ function Login() {
       />
 
       <Row marginTop={24}>
-        <CheckBox type="checkbox" />
+        <CheckBox 
+          type="checkbox" 
+          checked={isRememberChecked}
+          onChange={(event) => {
+            setIsRememberChecked(event.target.checked);
+          }}
+        />
         <Text H5 medium color={COLOR.N700} marginLeft={8}>Remember me</Text>
         <FlexBox />
         <SignInButton onClick={() => handleSignIn()}>
