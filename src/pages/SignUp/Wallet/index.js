@@ -36,8 +36,8 @@ function SignUpEmail() {
     dispatch({
       type: 'LOGIN',
     });
-    localStorage.setItem('login', true);
-    navigate('/home', { replace: true });
+    sessionStorage.setItem('login', true);
+    navigate('/', { replace: true });
   }
 
   return (
