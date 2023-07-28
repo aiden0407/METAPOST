@@ -9,19 +9,37 @@ import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row, FlexBox } from 'components/Flex';
 
+//Api
+import { reportContents } from 'apis/Home';
+
 //Assets
 import reportIcon from 'assets/icons/report.svg';
 import closeIcon from 'assets/icons/close.svg';
 import menuDownIcon from 'assets/icons/menu_down.svg';
 
-function Popup() {
+function ReportPopup() {
 
-  const { dispatch } = useContext(AppContext);
+  const { state: { reportData }, dispatch } = useContext(AppContext);
   const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Inappropriate contents');
   const [reportContent, setReportContent] = useState('');
 
-  function handleReport() {
+  const submitReport = async function () {
+    if (!reportContent.length) {
+      alert('Description field is empty');
+      return;
+    }
+
+    try {
+      await reportContents(selectedOption, reportContent, reportData.id, reportData.subject);
+      dispatch({ type: 'CLOSE_REPORT_POPUP' });
+      alert('The report has been received');
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  function handleReportClose() {
     dispatch({ type: 'CLOSE_REPORT_POPUP' });
   }
 
@@ -32,7 +50,7 @@ function Popup() {
           <Image src={reportIcon} width={24} />
           <Text H5 bold color={COLOR.N800} marginTop={2} marginLeft={8}>Report</Text>
           <FlexBox />
-          <StyledImage src={closeIcon} width={24} onClick={() => handleReport()} />
+          <StyledImage src={closeIcon} width={24} onClick={() => handleReportClose()} />
         </Row>
 
         <ToggleButton onClick={() => setIsToggleOpened(!isToggleOpened)}>
@@ -67,7 +85,7 @@ function Popup() {
           placeholder='Please enter details.'
         />
 
-        <SubmitButton>
+        <SubmitButton onClick={()=>submitReport()}>
           <Text H5 bold color={COLOR.N700}>Submit</Text>
         </SubmitButton>
       </PopupBox>
@@ -75,7 +93,7 @@ function Popup() {
   )
 }
 
-export default Popup
+export default ReportPopup
 
 const PopupContainer = styled.div`
   display: flex;
