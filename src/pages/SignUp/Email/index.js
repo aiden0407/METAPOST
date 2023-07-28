@@ -107,7 +107,7 @@ function SignUpEmail() {
         });
         sessionStorage.setItem('loginData', JSON.stringify(response.data));
         
-        navigate('/home', { replace: true });
+        navigate('/', { replace: true });
       } else {
         alert('The user name is already in use');
       }
