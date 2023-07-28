@@ -28,13 +28,13 @@ function App() {
         <BrowserRouter>
           <Layout>
             <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/signup/email" element={<SignUpEmail />} />
-              <Route path="/signup/wallet" element={<SignUpWallet />} />
-
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/post" element={<Post />} />
               <Route path="/write" element={<Write />} />
+
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup/email" element={<SignUpEmail />} />
+              <Route path="/signup/wallet" element={<SignUpWallet />} />
 
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/settings" element={<ProfileSettings />} />
