@@ -1,5 +1,6 @@
 //React
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { AppContext } from 'context/AppContext';
 import styled from 'styled-components';
 
@@ -9,6 +10,9 @@ import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
 
+//Api
+import { postComment, likedComment } from 'apis/Home';
+
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
 import likeIcon from 'assets/icons/like.svg';
@@ -17,17 +21,21 @@ import dislikeIcon from 'assets/icons/dislike.svg';
 //import dislikeColorIcon from 'assets/icons/dislike_color.svg';
 import commentIcon from 'assets/icons/comment.svg';
 import reportIcon from 'assets/icons/report.svg';
+import imageIcon from 'assets/icons/image.svg';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
-function Comment({ profileImage, userId, nftName, text, image, like, dislike, createdAt }) {
+function Comment({ postId, commentId, profileImage, userId, nftName, text, image, like, dislike, createdAt, depth }) {
 
+    const { state: { loginData } } = useContext(AuthContext);
     const { dispatch } = useContext(AppContext);
+    const [isCommentOpend, setIsCommentOpend] = useState(false);
+    const [comment, setComment] = useState('');
+    const [mediaUrl, setMediaUrl] = useState();
 
     function getTimeDifference(time) {
         const currentDate = new Date();
         const targetDate = new Date(time);
-
         const timeDifference = currentDate - targetDate;
-
         const seconds = Math.floor(timeDifference / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
@@ -44,14 +52,44 @@ function Comment({ profileImage, userId, nftName, text, image, like, dislike, cr
         }
     }
 
-    function handleReport(item) {
-        dispatch({ type: 'OPEN_REPORT_POPUP' });
+    const handlePostComment = async function () {
+        if (loginData) {
+            try {
+                await postComment(loginData.token.access, null, commentId, comment, mediaUrl);
+                window.location.reload();
+            } catch (error) {
+                alert(error);
+            }
+        } else {
+            alert('You need to login');
+        }
+    };
+
+    const handleLikedComment = async function (liked) {
+        if (loginData) {
+            try {
+                await likedComment(loginData.token.access, commentId, liked);
+                window.location.reload();
+            } catch (error) {
+                alert(error);
+            }
+        } else {
+            alert('You need to login');
+        }
+    };
+
+    function handleReport() {
+        dispatch({
+            type: 'OPEN_REPORT_POPUP',
+            subject: 'comment',
+            id: commentId
+        });
     }
 
     return (
-        <PostBox>
+        <PostBox depth={depth}>
             <Row>
-                <Image src={profileImage} width={33} borderRadius="4px" />
+                <Image src={profileImage ?? defaultProfile} width={33} borderRadius="4px" />
                 <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
                     <Row style={{ width: "100%" }}>
                         <Text B2 medium color={COLOR.N600}>{userId}</Text>
@@ -71,20 +109,40 @@ function Comment({ profileImage, userId, nftName, text, image, like, dislike, cr
             } */}
 
             <Row marginTop={8} gap={8}>
-                <StyledRow gap={4}>
+                <StyledRow gap={4} onClick={()=>handleLikedComment(true)}>
                     <Image src={likeIcon} width={12} />
                     <Text B4 medium color={COLOR.N700}>{like}</Text>
                 </StyledRow>
-                <StyledRow gap={4}>
+                <StyledRow gap={4} onClick={()=>handleLikedComment(false)}>
                     <Image src={dislikeIcon} width={12} marginTop={1} />
                     <Text B4 medium color={COLOR.N700}>{dislike}</Text>
                 </StyledRow>
-                <StyledRow gap={4}>
+                <StyledRow gap={4} onClick={() => setIsCommentOpend(!isCommentOpend)}>
                     <Image src={commentIcon} width={12} marginTop={2} />
                     <Text B4 medium color={COLOR.N600}>Comment</Text>
                 </StyledRow>
-                <StyledImage src={reportIcon} width={14} onClick={()=>handleReport()} />
+                <StyledImage src={reportIcon} width={14} onClick={() => handleReport()} />
             </Row>
+
+            {
+                isCommentOpend && <>
+                    <CommentInput
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                    />
+
+                    <Row marginTop={8}>
+                        <PostImageButton>
+                            <Image src={imageIcon} width={16} />
+                        </PostImageButton>
+                        <FlexBox />
+                        <PostButton onClick={() => handlePostComment()}>
+                            <Text B2 medium color={COLOR.N700}>Comment</Text>
+                        </PostButton>
+                    </Row>
+                </>
+            }
+
         </PostBox>
     )
 }
@@ -94,10 +152,44 @@ export default Comment
 const PostBox = styled.div`
   width: 100%;
   padding: 8px;
+  padding-left: ${(props) => (props.depth > 0) && `${8 + props.depth * 24}px`};
   background-color: #FFFFFF;
   border-bottom: 1px dashed ${COLOR.N400};
   display: flex;
   flex-flow: column;
+`
+
+const CommentInput = styled.textarea`
+  margin-top: 16px;
+  width: 100%;
+  height: 62px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid ${COLOR.N400};
+  font-size: 14px;
+`
+
+const PostImageButton = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
+  border: 1px solid ${COLOR.N400};
+  background-color: ${COLOR.N200};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`
+
+const PostButton = styled.div`
+  padding: 8.5px 18px;
+  border-radius: 2px;
+  border: 1px solid ${COLOR.N400};
+  background-color: ${COLOR.N200};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 `
 
 const StyledRow = styled(Row)`
