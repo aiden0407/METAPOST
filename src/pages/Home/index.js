@@ -10,6 +10,9 @@ import { Image } from 'components/Image';
 import { Row } from 'components/Flex';
 import Preview from 'components/Preview';
 
+//Api
+import { getMainPost } from 'apis/Home';
+
 //Assets
 import fireActiveIcon from 'assets/icons/fire_active.svg';
 import fireInactiveIcon from 'assets/icons/fire_inactive.svg';
@@ -19,39 +22,106 @@ import arrowNext from 'assets/icons/arrow_next.svg';
 import writeIcon from 'assets/icons/write.svg';
 
 import mainBanner1 from 'assets/images/main_banner1.png';
-import defaultProfile from 'assets/icons/icon_default_profile.png';
-import iconExample1 from 'assets/icons/icon_example_1.png';
-import iconExample2 from 'assets/icons/icon_example_2.png';
-import iconExample3 from 'assets/icons/icon_example_3.png';
 
 function Home() {
 
   const navigate = useNavigate();
-  const [activeButton, setActiveButton] = useState('HOT');
-  const [pageIndex, setPageIndex] = useState(1);
+  const [mainData, setMainData] = useState();
+  const [maxLength, setMaxLength] = useState();
+  const [activeButton, setActiveButton] = useState('hot');
+  const [pageIndex, setPageIndex] = useState(0);
   const [showButton, setShowButton] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
-      // 페이지 스크롤 위치를 확인하여 버튼의 표시 여부를 결정
-      const scrollY = window.scrollY;
+      const documentHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
       const windowHeight = window.innerHeight;
-
-      if (windowHeight - scrollY < 270) {
+      const scrollYMax = documentHeight - windowHeight;
+      const scrollY = window.scrollY;
+      if (scrollYMax - scrollY < 270) {
         setShowButton(false);
       } else {
         setShowButton(true);
       }
     };
 
-    // 스크롤 이벤트를 리스닝
     window.addEventListener('scroll', handleScroll);
-
-    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    initMainPost();
+  }, []);
+
+  const initMainPost = async function () {
+    try {
+      const response = await getMainPost(activeButton, 0);
+      setMainData(response.data);
+      setMaxLength(response.data.length);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleActiveButtonChange = async function (type) {
+    setActiveButton(type);
+    setPageIndex(0);
+    try {
+      const response = await getMainPost(type, 0);
+      setMainData(response.data);
+      setMaxLength(response.data.length);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleChangePaginationIndex = async function (index) {
+    setPageIndex(index);
+    try {
+      const response = await getMainPost(activeButton, index * 10);
+      setMainData(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  function Pagination() {
+    const paginationArray = [];
+    const totalPageIndex = Math.floor(maxLength / 10);
+
+    for (let ii = 0; ii <= totalPageIndex; ii++) {
+      const pageRowIndex = Math.floor(ii / 5);
+      if (!paginationArray[pageRowIndex]) {
+        paginationArray[pageRowIndex] = [];
+      }
+      paginationArray[pageRowIndex].push(ii);
+    }
+
+    return (
+      <Row marginTop={24} gap={8} style={{ width: "100%", justifyContent: "center" }}>
+        <PageButton onClick={() => pageIndex > 0 && handleChangePaginationIndex(pageIndex - 1)}>
+          <Image src={arrowNext} width={24} style={{ transform: "scaleX(-1)", opacity: pageIndex === 0 && 0.4 }} />
+        </PageButton>
+
+        {
+          paginationArray?.[Math.floor(pageIndex / 5)]?.map((item) =>
+            <PageButton key={item} onClick={() => handleChangePaginationIndex(item)}>
+              <Text B1 medium color={pageIndex === item ? COLOR.BLUE1 : COLOR.N600}>{item+1}</Text>
+            </PageButton>
+          )
+        }
+
+        <PageButton onClick={() => pageIndex < totalPageIndex && handleChangePaginationIndex(pageIndex + 1)}>
+          <Image src={arrowNext} width={24} style={{ opacity: pageIndex === totalPageIndex && 0.4 }} />
+        </PageButton>
+      </Row>
+    )
+  }
 
   return (
     <HomeContainer>
@@ -70,115 +140,50 @@ function Home() {
 
       <BodyWrapper>
         <Row gap={4}>
-          <MenuButton active={activeButton === 'HOT'} onClick={() => setActiveButton('HOT')}>
+          <MenuButton active={activeButton === 'hot'} onClick={() => handleActiveButtonChange('hot')}>
             <Row>
-              <Image src={activeButton === 'HOT' ? fireActiveIcon : fireInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'HOT' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
+              <Image src={activeButton === 'hot' ? fireActiveIcon : fireInactiveIcon} width={14} />
+              <Text B1 bold color={activeButton === 'hot' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
             </Row>
           </MenuButton>
-          <MenuButton active={activeButton === 'FOLLOW'} onClick={() => setActiveButton('FOLLOW')}>
+          <MenuButton active={activeButton === 'follow'} onClick={() => handleActiveButtonChange('follow')}>
             <Row>
               <Image src={followInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'FOLLOW' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
+              <Text B1 bold color={activeButton === 'follow' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
             </Row>
           </MenuButton>
-          <MenuButton active={activeButton === 'NEW'} onClick={() => setActiveButton('NEW')}>
+          <MenuButton active={activeButton === 'new'} onClick={() => handleActiveButtonChange('new')}>
             <Row>
               <Image src={newInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'NEW' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NEW</Text>
+              <Text B1 bold color={activeButton === 'new' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NEW</Text>
             </Row>
           </MenuButton>
         </Row>
 
-        <ContentsWrapper>
-          <Preview
-            postId={"1"}
-            profileImage={iconExample2}
-            userId={"ReallyGood"}
-            nftName={"Bored Ape Yacht Club #3261"}
-            title={"글 제목 입니다."}
-            long={32}
-            short={8}
-            comment={6}
-            communityName={"Community name"}
-            createdAt={"2023-07-22T16:48:00Z"}
-          />
-          <Preview
-            postId={"2"}
-            profileImage={iconExample1}
-            userId={"Rhoncus"}
-            nftName={"NFT name"}
-            title={"글 제목 입니다."}
-            image={iconExample3}
-            long={32}
-            short={8}
-            comment={6}
-            communityName={"Community name"}
-            createdAt={"2023-07-19T16:48:00Z"}
-          />
-          <Preview
-            postId={"3"}
-            profileImage={iconExample2}
-            userId={"ReallyGood"}
-            nftName={"Bored Ape Yacht Club #3261"}
-            title={"글 제목 입니다."}
-            long={32}
-            short={8}
-            comment={6}
-            communityName={"Community name"}
-            createdAt={"2023-07-16T16:48:00Z"}
-          />
-          <Preview
-            postId={"4"}
-            profileImage={defaultProfile}
-            userId={"ReallyGood"}
-            nftName={"Bored Ape Yacht Club #3261"}
-            title={"글 제목 입니다."}
-            long={32}
-            short={8}
-            comment={6}
-            communityName={"Community name"}
-            createdAt={"2023-07-16T16:48:00Z"}
-          />
-          <Preview
-            postId={"5"}
-            profileImage={iconExample2}
-            userId={"ReallyGood"}
-            nftName={"Bored Ape Yacht Club #3261"}
-            title={"글 제목 입니다."}
-            long={32}
-            short={8}
-            comment={6}
-            communityName={"Community name"}
-            createdAt={"2023-07-16T16:48:00Z"}
-          />
-        </ContentsWrapper>
+        {
+          mainData && <ContentsWrapper>
+            {
+              mainData.map((item) =>
+                <Preview
+                  key={`post_${item.id}`}
+                  postId={item.id}
+                  profileImage={item.nft_thumbnail}
+                  userId={item.nickname}
+                  nftName={item.nft_title}
+                  title={item.title}
+                  image={item?.image}
+                  long={item.liked_count}
+                  short={item.disliked_count}
+                  comment={item.comment_count}
+                  communityName={item.community_title}
+                  createdAt={item.created_at}
+                />)
+            }
+          </ContentsWrapper>
+        }
 
-        <Row marginTop={24} gap={8} style={{ width: "100%", justifyContent: "center" }}>
-          <PageButton onClick={() => pageIndex>1 && setPageIndex(pageIndex - 1)}>
-            <Image src={arrowNext} width={24} style={{transform: "scaleX(-1)", opacity: pageIndex===1 && 0.4}} />
-          </PageButton>
+        <Pagination />
 
-          <PageButton onClick={() => setPageIndex(1)}>
-            <Text B1 medium color={pageIndex === 1 ? COLOR.BLUE1 : COLOR.N600}>1</Text>
-          </PageButton>
-          <PageButton onClick={() => setPageIndex(2)}>
-            <Text B1 medium color={pageIndex === 2 ? COLOR.BLUE1 : COLOR.N600}>2</Text>
-          </PageButton>
-          <PageButton onClick={() => setPageIndex(3)}>
-            <Text B1 medium color={pageIndex === 3 ? COLOR.BLUE1 : COLOR.N600}>3</Text>
-          </PageButton>
-          <PageButton onClick={() => setPageIndex(4)}>
-            <Text B1 medium color={pageIndex === 4 ? COLOR.BLUE1 : COLOR.N600}>4</Text>
-          </PageButton>
-          <PageButton onClick={() => setPageIndex(5)}>
-            <Text B1 medium color={pageIndex === 5 ? COLOR.BLUE1 : COLOR.N600}>5</Text>
-          </PageButton>
-
-          <PageButton onClick={() => pageIndex<5 && setPageIndex(pageIndex + 1)}>
-            <Image src={arrowNext} width={24} style={{opacity: pageIndex===5 && 0.4}} />
-          </PageButton>
-        </Row>
       </BodyWrapper>
     </HomeContainer>
   );
