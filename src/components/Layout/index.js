@@ -5,14 +5,16 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
+import { COLOR } from 'constants/design';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import ReportPopup from 'components/Popup/ReportPopup';
+import Search from 'components/Popup/Search';
 
 function Layout({ children }) {
 
   const location = useLocation();
-  const { state: { isReportPopupOpened } } = useContext(AppContext);
+  const { state: { isReportPopupOpened, isSearchPopupOpened } } = useContext(AppContext);
 
   const handleChangeColor = (value) => {
     switch (value) {
@@ -31,6 +33,7 @@ function Layout({ children }) {
       case '/login':
       case '/signup/email':
       case '/signup/wallet':
+      case '/search':
       case '/profile/settings':
         return false;
 
@@ -61,6 +64,9 @@ function Layout({ children }) {
       {
         isReportPopupOpened && <ReportPopup />
       }
+      {
+        isSearchPopupOpened && <Search />
+      }
     </>
   )
 }
@@ -79,7 +85,7 @@ const Container = styled.div`
 const HeaderContainer = styled.header`
   width: 100%;
   height: 48px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid ${COLOR.N400};
   background: #FFFFFF;
   display: flex;
   justify-content: center;
