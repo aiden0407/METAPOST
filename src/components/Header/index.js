@@ -12,6 +12,7 @@ import { FlexBox } from 'components/Flex';
 //Assets
 import mainLogo from 'assets/icons/main_logo.svg';
 import searchIcon from 'assets/icons/search.svg';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Header() {
 
@@ -22,8 +23,8 @@ function Header() {
 
   useEffect(() => {
     if(loginData){
-      if(location.pathname==='/'){
-        navigate('/home', { replace: true });
+      if(location.pathname==='/login'){
+        navigate('/', { replace: true });
       }
     } else {
       const localStorageData = localStorage.getItem('loginData');
@@ -36,27 +37,27 @@ function Header() {
           loginData: storedLoginData
         });
 
+        if(location.pathname==='/login'){
+          navigate('/', { replace: true });
+        }
       } else if (sessionStorageData) {
         const storedLoginData = JSON.parse(sessionStorageData);
         dispatch({
           type: 'LOGIN',
           loginData: storedLoginData
         });
-
+        if(location.pathname==='/login'){
+          navigate('/', { replace: true });
+        }
       } else {
         switch (location.pathname) {
-          case '/':
-          case '/signup/email':
-          case '/signup/wallet':
-          case '/notice':
-          case '/suggestion':
-          case '/policy':
-          case '/terms':
-          case '/contact':
+          case '/write':
+          case '/profile':
+          case '/profile/settings':
+            navigate('/login', { replace: true });
             break;
-
+    
           default:
-            navigate('/', { replace: true });
             break;
         }
       }
@@ -64,12 +65,8 @@ function Header() {
   }, [location.pathname, dispatch, navigate]);
 
   function handleNavigateHome() {
-    if (loginData) {
-      navigate('/home');
-      window.scrollTo({ top: 0 });
-    } else {
-      navigate('/');
-    }
+    navigate('/');
+    window.scrollTo({ top: 0 });
   }
 
   function handleNavigateSearch() {
@@ -78,7 +75,7 @@ function Header() {
   }
 
   function handleNavigateJoin() {
-    navigate('/');
+    navigate('/login');
   }
 
   function handleTogglOpen() {
@@ -102,7 +99,7 @@ function Header() {
     sessionStorage.removeItem('loginData');
     dispatch({ type: 'LOGOUT' });
     setIsToggleOpened(false);
-    navigate('/');
+    navigate('/login');
   }
 
   return (
@@ -112,7 +109,7 @@ function Header() {
       <SearchIcon src={searchIcon} onClick={() => handleNavigateSearch()} />
       {
         loginData
-          ? <ProfileIcon src={loginData.user.nft_thumbnail} onClick={() => handleTogglOpen()} />
+          ? <ProfileIcon src={loginData.user.nft_thumbnail ?? defaultProfile} onClick={() => handleTogglOpen()} />
           : <SignUpButton onClick={() => handleNavigateJoin()}>
             <Text B1 medium color="#FFFFFF">Join</Text>
           </SignUpButton>
