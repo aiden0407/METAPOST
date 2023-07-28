@@ -22,6 +22,7 @@ import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment_black.svg';
 import imageIcon from 'assets/icons/image.svg';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Post() {
 
@@ -151,7 +152,7 @@ function Post() {
         </Row>
 
         <Row marginTop={18} style={{ width: "100%" }}>
-          <Image src={postDetail.detail[0]?.nft_thumbnail} width={33} borderRadius="4px" />
+          <Image src={postDetail.detail[0]?.nft_thumbnail ?? defaultProfile} width={33} borderRadius="4px" />
           <Column marginLeft={8} gap={4}>
             <Text B2 medium color={COLOR.N700}>{postDetail.detail[0].nickname}</Text>
             <Row>
