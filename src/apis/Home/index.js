@@ -128,3 +128,41 @@ export const likedComment = async function (accessToken, commentId, liked) {
     throw error.response.data;
   }
 }
+
+export const reportContents = async function (title, description, refernceId, refernceType) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/report`,
+      method: 'POST',
+      data: {
+        title: title,
+        description: description,
+        refernce_id: refernceId,
+        refernce_type: refernceType,
+      }
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
+export const searchContents = async function (text, type) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/search`,
+      method: 'POST',
+      data: {
+        search_text: text,
+        tap_type: type,
+      }
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
