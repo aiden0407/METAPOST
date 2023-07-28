@@ -7,7 +7,8 @@ const initialState = {
   reportData: {
     subject: undefined,
     id: undefined
-  }
+  },
+  isSearchPopupOpened: false,
 };
 
 //create context
@@ -35,6 +36,18 @@ const reducer = (state, action) => {
           subject: undefined,
           id: undefined
         }
+      };
+
+    case 'OPEN_SEARCH_POPUP':
+      return {
+        ...state,
+        isSearchPopupOpened: true,
+      };
+
+    case 'CLOSE_SEARCH_POPUP':
+      return {
+        ...state,
+        isSearchPopupOpened: false,
       };
 
     default:
