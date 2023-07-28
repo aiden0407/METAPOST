@@ -24,6 +24,11 @@ export const FlexBox = styled.div`
     flex: 1;
 `;
 
+export const Box = styled.div`
+  width: ${(props) => `${props.width ?? 0}px`};
+  height: ${(props) => `${props.height ?? 0}px`};
+`;
+
 export const DividingLine = styled.div`
   width: 100%;
   height: 1px;
