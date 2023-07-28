@@ -1,5 +1,6 @@
 //React
-import { useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -10,35 +11,78 @@ import { Image } from 'components/Image';
 import { BorderInput } from 'components/TextInput';
 import { Row } from 'components/Flex';
 
+//Api
+import { getUserData, editUserData } from 'apis/Profile';
+
 //Assets
 import walletIcon from 'assets/icons/wallet.svg';
 import copyIcon from 'assets/icons/copy.svg';
-
 import nftIcon from 'assets/icons/icon_nft.png';
-import iconExample1 from 'assets/icons/icon_example_1.png';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function ProfileSettings() {
 
   const navigate = useNavigate();
+  const { state: { loginData } } = useContext(AuthContext);
+
+  const [userData, setUserData] = useState();
   const [userName, setUserName] = useState('');
   const [description, setDescription] = useState('');
+
+  const [walletAdress, setWalletAdress] = useState();
+  const [nftId, setNftId] = useState();
+
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  const [isEmailAuthChecked, setIsEmailAuthChecked] = useState(false);
+
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  useEffect(() => {
+    if(loginData){
+      initUserProfile();
+    }
+  }, [loginData]);
+
+  const initUserProfile = async function () {
+    try {
+      const response = await getUserData(loginData.token.access);
+      setUserData(response.data);
+      setUserName(response.nickname);
+      setDescription(response.memo);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleDone = async function () {
+    try {
+      await editUserData(loginData.token.access, (isEmailAuthChecked ? email : userData.uid), password, userName, walletAdress, nftId);
+      navigate('/profile');
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  if (!userData) {
+    return null;
+  }
 
   return (
     <ProfileContainer>
       <Text H4 bold color={COLOR.N1000} marginTop={12} marginLeft={12}>User setting</Text>
 
       <ProfileBox>
-        <Image src={iconExample1} width={80} borderRadius="4px" />
-        <Text B1 medium color={COLOR.N700} marginTop={12}>MynameisJungu</Text>
+        <Image src={userData.nft_thumbnail ?? defaultProfile} width={80} borderRadius="4px" />
+        <Text B1 medium color={COLOR.N700} marginTop={12}>{userData.nickname}</Text>
         <Row marginTop={9}>
           <Image src={nftIcon} width={16} />
-          <Text B1 medium color={COLOR.N800} marginLeft={4}>BAYC #5263</Text>
+          <Text B1 medium color={COLOR.N800} marginLeft={4}>{userData.nft_name}</Text>
         </Row>
       </ProfileBox>
 
@@ -46,7 +90,7 @@ function ProfileSettings() {
         <Text H5 bold color={COLOR.N1000}>User name</Text>
         <BorderInput
           type="text"
-          placeholder="MynameisJungu"
+          placeholder={userData.nickname}
           value={userName}
           onChange={(event) => {
             setUserName(event.target.value);
@@ -70,7 +114,7 @@ function ProfileSettings() {
       <ContentBox>
         <Row>
           <Text Text H5 bold color={COLOR.N1000}>Description</Text>
-          <Text Text B2 medium color={COLOR.N600} marginLeft={24}>{description.length}/300</Text>
+          <Text Text B2 medium color={COLOR.N600} marginLeft={24}>{description?.length}/300</Text>
         </Row>
         <DescriptionInput
           value={description}
@@ -122,7 +166,7 @@ function ProfileSettings() {
       <ContentBox>
         <Text Text H5 bold color={COLOR.N1000}>Password</Text>
         <BorderInput
-          type={showPassword ? 'text' : 'password'}
+          type='password'
           value={password}
           onChange={(event) => {
             setPassword(event.target.value);
@@ -133,7 +177,7 @@ function ProfileSettings() {
 
         <Text B1 medium color={COLOR.N700} marginTop={16}>Confirm Password</Text>
         <BorderInput
-          type={showPasswordConfirm ? 'text' : 'password'}
+          type='password'
           value={passwordConfirm}
           onChange={(event) => {
             setPasswordConfirm(event.target.value);
@@ -143,7 +187,7 @@ function ProfileSettings() {
         />
       </ContentBox>
 
-      <DoneButton>
+      <DoneButton onClick={() => handleDone()}>
         <Text H5 bold color="#FFFFFF">Done</Text>
       </DoneButton>
     </ProfileContainer>
