@@ -11,6 +11,9 @@ import { Image } from 'components/Image';
 import { BorderInput } from 'components/TextInput';
 import { Row, RelativeWrapper } from 'components/Flex';
 
+//Api
+import { emailAuthSend, emailAuthCheck, userNameCheck, registerByEmail } from 'apis/SignUp';
+
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
 import passwordEyeIcon from 'assets/icons/password_eye.svg';
@@ -27,32 +30,95 @@ function SignUpEmail() {
   const navigate = useNavigate();
   const { dispatch } = useContext(AuthContext);
   const [step, setStep] = useState('Basic info');
+
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  const [isEmailAuthChecked, setIsEmailAuthChecked] = useState(false);
+
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [isWalletClicked, setIsWalletClicked] = useState(false);
 
-  function handleContinue() {
-    setStep('Profile Setting');
+  const [userName, setUserName] = useState('');
+  const [isToggleOpened, setIsToggleOpened] = useState(false);
+  const [walletAdress, setWalletAdress] = useState();
+  const [nftId, setNftId] = useState();
+
+  const handleEmailAuthSend = async function () {
+    if(email.length){
+      try {
+        const response = await emailAuthSend(email);
+        setCode(response.data.code.toString());
+      } catch (error) {
+        alert(error);
+      }
+    } else {
+      alert('Email field is empty');
+    }
   }
 
-  function handleConnectClick() {
-    setIsWalletClicked(true);
+  const handleEmailAuthCheck = async function () {
+    try {
+      const response = await emailAuthCheck(email, code);
+      alert(response.data);
+      if(response.data==="Authentication is complete."){
+        setIsEmailAuthChecked(true);
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  function handleContinue() {
+    if(!isEmailAuthChecked){
+      alert('Email is not verified');
+      return ;
+    }
+    if(password!==passwordConfirm || !password){
+      alert('Passwords do not match');
+      return ;
+    }
+    setStep('Profile Setting');
   }
 
   function handleConnectWallet() {
   }
 
-  function handleDone() {
-    dispatch({
-      type: 'LOGIN',
-    });
-    localStorage.setItem('login', true);
-    navigate('/home', { replace: true });
+  const checkUserNameAvailability = async function () {
+    try {
+      const response = await userNameCheck(userName);
+      return response.data;
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  const handleDone = async function () {
+    try {
+      const nicknameAlreadyUsed = await checkUserNameAvailability();
+  
+      if (!nicknameAlreadyUsed) {
+        const response = await registerByEmail(email, password, userName, walletAdress, nftId);
+
+        dispatch({
+          type: 'LOGIN',
+          loginData: response.data
+        });
+        sessionStorage.setItem('loginData', JSON.stringify(response.data));
+        
+        navigate('/home', { replace: true });
+      } else {
+        alert('The user name is already in use');
+      }
+    } catch (error) {
+      if(error?.uid){
+        alert(error?.uid[0]);
+      }
+      if(error?.nickname){
+        alert(error?.nickname[0]);
+      }
+    }
   }
 
   return (
@@ -83,7 +149,7 @@ function SignUpEmail() {
                   setEmail(event.target.value);
                 }}
               />
-              <SmallButton><Text B1 medium color={COLOR.N800}>Send</Text></SmallButton>
+              <SmallButton onClick={()=>handleEmailAuthSend()}><Text B1 medium color={COLOR.N800}>Send</Text></SmallButton>
             </Row>
 
             <Text B1 medium color={COLOR.N700} marginTop={24}>Confirm Code</Text>
@@ -96,7 +162,7 @@ function SignUpEmail() {
                   setCode(event.target.value);
                 }}
               />
-              <SmallButton><Text B1 medium color={COLOR.N800}>Done</Text></SmallButton>
+              <SmallButton onClick={()=>handleEmailAuthCheck()}><Text B1 medium color={COLOR.N800}>Done</Text></SmallButton>
             </Row>
 
             <Text B1 medium color={COLOR.N700} marginTop={24}>Password</Text>
@@ -137,7 +203,7 @@ function SignUpEmail() {
 
             <Text B1 medium color={COLOR.N700} marginTop={40}>Wallet</Text>
             {
-              isWalletClicked
+              isToggleOpened
                 ? <ToggleMenu>
                   <StyledRow onClick={() => handleConnectWallet()}>
                     <Image src={metaMaskIcon} width={24} />
@@ -152,7 +218,7 @@ function SignUpEmail() {
                     <Text B1 medium marginLeft={8}>WalletConnect</Text>
                   </StyledRow>
                 </ToggleMenu>
-                : <ConnectWalletButton onClick={() => handleConnectClick()}>
+                : <ConnectWalletButton onClick={() => setIsToggleOpened(true)}>
                   <Text H5 bold color="#FFFFFF">Connect</Text>
                 </ConnectWalletButton>
             }
