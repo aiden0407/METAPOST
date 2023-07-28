@@ -1,5 +1,6 @@
 //React
-import { useState } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -10,29 +11,66 @@ import { Image } from 'components/Image';
 import { Row } from 'components/Flex';
 import Preview from 'components/Preview';
 
+//Api
+import { getUserData } from 'apis/Profile';
+
 //Assets
 import settingIcon from 'assets/icons/setting.svg';
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
-
+import verifiedIcon from 'assets/icons/verified.svg';
 import nftIcon from 'assets/icons/icon_nft.png';
-import iconExample1 from 'assets/icons/icon_example_1.png';
-import iconExample3 from 'assets/icons/icon_example_3.png';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Profile() {
 
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false);
+  const { state: { loginData } } = useContext(AuthContext);
+  const [userData, setUserData] = useState();
+  const [isDescriptionOver2Lines, setIsDescriptionOver2Lines] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isCommunityExpanded, setIsCommunityExpanded] = useState(false);
+  const containerRef = useRef(null);
 
-  const profileDescription = 'Massa praesent sed tincidunt sed nunc ut mi. Sagittis imperdiet tempor sit eget vitae id nullam libero pharetra. Neque ut mattis vitae id suspendisse tempus ipsum bibendum ac. Pulvinar id magna eget ac posuere ultrices facilisis condimentum.';
+  useEffect(() => {
+    if (containerRef.current) {
+      const containerHeight = containerRef.current.clientHeight;
+      const lineHeight = parseInt(window.getComputedStyle(containerRef.current).lineHeight);
+      const lineCount = containerHeight / lineHeight;
+      setIsDescriptionOver2Lines(lineCount > 2);
+    }
+  }, [userData?.memo]);
+
+  useEffect(() => {
+    if(loginData){
+      initUserProfile();
+    }
+  }, [loginData]);
+
+  const initUserProfile = async function () {
+    try {
+      const response = await getUserData(loginData.token.access);
+      setUserData(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleImageError = (error) => {
+    error.target.src = defaultProfile;
+  }
+
+  if (!userData) {
+    return null;
+  }
 
   return (
     <ProfileContainer>
       <ProfileBox>
-        <Image src={iconExample1} width={80} borderRadius="4px" />
-        <Text B1 medium color={COLOR.N700} marginTop={12}>MynameisJungu</Text>
+        <Image src={userData.nft_thumbnail ?? defaultProfile} width={80} borderRadius="4px" />
+        <Text B1 medium color={COLOR.N700} marginTop={12}>{userData.nickname}</Text>
         <Row marginTop={9}>
           <Image src={nftIcon} width={16} />
-          <Text B1 medium color={COLOR.N800} marginLeft={4}>BAYC #5263</Text>
+          <Text B1 medium color={userData.nft_name ? COLOR.N800 : COLOR.N600} marginLeft={4}>{userData.nft_name ?? 'The NFT has not been registered yet'}</Text>
         </Row>
         <SettingImage src={settingIcon} width={20} onClick={() => {
           navigate(`/profile/settings`);
@@ -40,56 +78,106 @@ function Profile() {
         }} />
       </ProfileBox>
 
-      <ProfileDescriptionContainer expanded={expanded}>
-        {profileDescription}
+      <ProfileDescriptionContainer
+        expanded={isDescriptionExpanded}
+        ref={containerRef}
+        style={!isDescriptionOver2Lines ? { display: 'flex', justifyContent: 'center' } : {}}
+      >
+        {userData.memo ?? 'Description does not exist'}
       </ProfileDescriptionContainer>
-      <ExpandButton onClick={() => setExpanded(!expanded)}>
-        <Row marginLeft={-10}>
-          <Image src={arrowNextIcon} width={16} style={{ transform: expanded ? "rotate(270deg)" : "rotate(90deg)" }} />
-          <Text B3 color={COLOR.N600} marginLeft={2}>{expanded ? 'Close' : 'View more'}</Text>
-        </Row>
+      <ExpandButton
+        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+        style={!isDescriptionOver2Lines ? { cursor: 'default', paddingBottom: '0px' } : {}}
+      >
+        {
+          isDescriptionOver2Lines && <Row marginLeft={-10}>
+            <Image src={arrowNextIcon} width={16} style={{ transform: isDescriptionExpanded ? "rotate(270deg)" : "rotate(90deg)" }} />
+            <Text B3 color={COLOR.N600} marginLeft={2}>{isDescriptionExpanded ? 'Close' : 'View more'}</Text>
+          </Row>
+        }
       </ExpandButton>
 
+      <Text B1 bold color={COLOR.N1000} marginTop={24} marginLeft={12}>My community</Text>
+      {
+        userData.communities.length
+          ? <>
+            <CommunityContainer expanded={isCommunityExpanded}>
+              {
+                userData.communities.map((item, index) => {
+                  if(isCommunityExpanded){
+                    return (
+                      <Row key={`post_${item.id}`}>
+                        <Image src={item.logo_url} width={24} height={24} onError={handleImageError} />
+                        <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
+                        {
+                          item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
+                        }
+                      </Row>
+                    )
+                  } else {
+                    if (index < 5) {
+                      return (
+                        <Row key={`post_${item.id}`}>
+                          <Image src={item.logo_url} width={24} height={24} onError={handleImageError} />
+                          <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
+                          {
+                            item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
+                          }
+                        </Row>
+                      )
+                    }
+                  }
+                })
+              }
+            </CommunityContainer>
+            <ExpandButton
+              onClick={() => {
+                if (userData.communities.length > 5) {
+                  setIsCommunityExpanded(!isCommunityExpanded);
+                }
+              }}
+              style={userData.communities.length < 6 ? { cursor: 'default', paddingBottom: '4px' } : {}}
+            >
+              {
+                userData.communities.length > 5 && <Row marginLeft={-10}>
+                  <Image src={arrowNextIcon} width={16} style={{ transform: isCommunityExpanded ? "rotate(270deg)" : "rotate(90deg)" }} />
+                  <Text B3 color={COLOR.N600} marginLeft={2}>{isCommunityExpanded ? 'Close' : 'View more'}</Text>
+                </Row>
+              }
+            </ExpandButton>
+          </>
+          : <NoContentsWrapper>
+            <Text H5 color={COLOR.N700} marginTop={32}>The registered community does not exist</Text>
+          </NoContentsWrapper>
+      }
+
+
       <Text B1 bold color={COLOR.N1000} marginTop={24} marginLeft={12}>Post history</Text>
-      <ContentsWrapper>
-        <Preview
-          postId={"1"}
-          profileImage={iconExample1}
-          userId={"MynameisJungu"}
-          nftName={"BAYC #5263"}
-          title={"글 제목 입니다."}
-          long={32}
-          short={8}
-          comment={6}
-          communityName={"CryptoPhunks"}
-          createdAt={"2023-07-22T16:48:00Z"}
-        />
-        <Preview
-          postId={"2"}
-          profileImage={iconExample1}
-          userId={"MynameisJungu"}
-          nftName={"BAYC #5263"}
-          title={"글 제목 입니다."}
-          image={iconExample3}
-          long={32}
-          short={8}
-          comment={6}
-          communityName={"CryptoPhunks"}
-          createdAt={"2023-07-19T16:48:00Z"}
-        />
-        <Preview
-          postId={"3"}
-          profileImage={iconExample1}
-          userId={"MynameisJungu"}
-          nftName={"BAYC #5263"}
-          title={"글 제목 입니다."}
-          long={32}
-          short={8}
-          comment={6}
-          communityName={"CryptoPhunks"}
-          createdAt={"2023-07-16T16:48:00Z"}
-        />
-      </ContentsWrapper>
+      {
+        userData.posts.length
+          ? <ContentsWrapper>
+            {
+              userData.posts.map((item) =>
+                <Preview
+                  key={`post_${item.id}`}
+                  postId={item.id}
+                  profileImage={item.nft_thumbnail}
+                  userId={item.user_nickname}
+                  nftName={item.nft_title}
+                  title={item.title}
+                  image={item?.image}
+                  long={item.liked_count}
+                  short={item.disliked_count}
+                  comment={item.comment_count}
+                  communityName={item.community_name}
+                  createdAt={item.created_at}
+                />)
+            }
+          </ContentsWrapper>
+          : <NoContentsWrapper>
+            <Text H5 color={COLOR.N700} marginTop={32}>Post history does not exist</Text>
+          </NoContentsWrapper>
+      }
 
     </ProfileContainer>
   );
@@ -141,6 +229,21 @@ const ProfileDescriptionContainer = styled.div`
   max-height: ${props => (props.expanded ? '1000px' : '60px')};
 `;
 
+const CommunityContainer = styled.div`
+  margin-top: 8px;
+  width: 100%;
+  padding: 12px 12px 0 12px;
+  background-color: #FFFFFF;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  max-height: ${props => (props.expanded ? '1000px' : '172px')};
+`;
+
 const ExpandButton = styled.div`
   width: 100%;
   padding: 8px 0;
@@ -158,4 +261,14 @@ const ContentsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+`
+
+const NoContentsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`
+
+const StyledText = styled(Text)`
+  cursor: pointer;
 `
