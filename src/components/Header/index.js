@@ -12,42 +12,59 @@ import { FlexBox } from 'components/Flex';
 //Assets
 import mainLogo from 'assets/icons/main_logo.svg';
 import searchIcon from 'assets/icons/search.svg';
-import iconExample1 from 'assets/icons/icon_example_1.png';
 
 function Header() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { state: { login }, dispatch } = useContext(AuthContext);
+  const { state: { loginData }, dispatch } = useContext(AuthContext);
   const [isToggleOpened, setIsToggleOpened] = useState(false);
 
   useEffect(() => {
-    const storedLoginData = localStorage.getItem('login');
+    if(loginData){
+      if(location.pathname==='/'){
+        navigate('/home', { replace: true });
+      }
+    } else {
+      const localStorageData = localStorage.getItem('loginData');
+      const sessionStorageData = sessionStorage.getItem('loginData');
 
-    switch (location.pathname) {
-      case '/':
-        if (storedLoginData) {
-          dispatch({ type: 'LOGIN' });
-          navigate('/home', { replace: true });
+      if (localStorageData) {
+        const storedLoginData = JSON.parse(localStorageData);
+        dispatch({
+          type: 'LOGIN',
+          loginData: storedLoginData
+        });
+
+      } else if (sessionStorageData) {
+        const storedLoginData = JSON.parse(sessionStorageData);
+        dispatch({
+          type: 'LOGIN',
+          loginData: storedLoginData
+        });
+
+      } else {
+        switch (location.pathname) {
+          case '/':
+          case '/signup/email':
+          case '/signup/wallet':
+          case '/notice':
+          case '/suggestion':
+          case '/policy':
+          case '/terms':
+          case '/contact':
+            break;
+
+          default:
+            navigate('/', { replace: true });
+            break;
         }
-        break;
-
-      case '/signup/email':
-      case '/signup/wallet':
-        break;
-
-      default:
-        if (storedLoginData) {
-          dispatch({ type: 'LOGIN' });
-        } else {
-          navigate('/', { replace: true });
-        }
-        break;
+      }
     }
   }, [location.pathname, dispatch, navigate]);
 
   function handleNavigateHome() {
-    if (login) {
+    if (loginData) {
       navigate('/home');
       window.scrollTo({ top: 0 });
     } else {
@@ -81,7 +98,8 @@ function Header() {
   }
 
   function handleLogOut() {
-    localStorage.removeItem('login');
+    localStorage.removeItem('loginData');
+    sessionStorage.removeItem('loginData');
     dispatch({ type: 'LOGOUT' });
     setIsToggleOpened(false);
     navigate('/');
@@ -93,8 +111,8 @@ function Header() {
       <FlexBox />
       <SearchIcon src={searchIcon} onClick={() => handleNavigateSearch()} />
       {
-        login
-          ? <ProfileIcon src={iconExample1} onClick={() => handleTogglOpen()} />
+        loginData
+          ? <ProfileIcon src={loginData.user.nft_thumbnail} onClick={() => handleTogglOpen()} />
           : <SignUpButton onClick={() => handleNavigateJoin()}>
             <Text B1 medium color="#FFFFFF">Join</Text>
           </SignUpButton>
