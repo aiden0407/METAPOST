@@ -4,56 +4,67 @@ import axios from 'axios';
 export const emailAuthSend = async function (email) {
   try {
     let options = {
-      url: `${process.env.REACT_APP_API_HOST}/?email=${email}`,
+      url: `${process.env.REACT_APP_API_HOST}/send-auth-email/${email}`,
       method: 'GET',
     }
     const response = await axios(options);
     return response;
 
   } catch (error) {
-    throw error.response;
+    throw error.response.data;
   }
 }
 
 export const emailAuthCheck = async function (email, confirmCode) {
   try {
     let options = {
-      url: `${process.env.REACT_APP_API_HOST}/?email=${email}&confirm_code=${confirmCode}`,
-      method: 'GET',
+      url: `${process.env.REACT_APP_API_HOST}/email-auth`,
+      method: 'POST',
+      data: {
+        email: email,
+        code: confirmCode,
+      }
     }
     const response = await axios(options);
     return response;
 
   } catch (error) {
-    throw error.response;
+    throw error.response.data;
   }
 }
 
 export const userNameCheck = async function (userName) {
   try {
     let options = {
-      url: `${process.env.REACT_APP_API_HOST}/?user_name=${userName}`,
+      url: `${process.env.REACT_APP_API_HOST}/has-nickname/${userName}`,
       method: 'GET',
     }
     const response = await axios(options);
     return response;
 
   } catch (error) {
-    throw error.response;
+    throw error.response.data;
   }
 }
 
-export const registerByEmail = async function (email, password, walletAdress, userName, nftId) {
+export const registerByEmail = async function (email, password, userName, walletAdress, nftId) {
   try {
     let options = {
-      url: `${process.env.REACT_APP_API_HOST}/?email=${email}&password=${password}&wallet_adress=${walletAdress}&user_name=${userName}&nft_id=${nftId}`,
-      method: 'GET',
+      url: `${process.env.REACT_APP_API_HOST}/sign-up`,
+      method: 'POST',
+      data: {
+        uid: email,
+        password: password,
+        nickname: userName,
+        wallet_adress: walletAdress,
+        nft_id: nftId
+      }
     }
     const response = await axios(options);
     return response;
 
   } catch (error) {
-    throw error.response;
+    throw error.response.data;
   }
 }
 
@@ -67,6 +78,6 @@ export const registerByWallet = async function (walletAdress, userName, nftId) {
     return response;
 
   } catch (error) {
-    throw error.response;
+    throw error.response.data;
   }
 }
