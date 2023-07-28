@@ -31,14 +31,14 @@ function Login() {
 
   const handleSignIn = async function () {
 
-    if(!email.length){
+    if (!email.length) {
       alert('Email field is empty');
-      return ;
+      return;
     }
 
-    if(!password.length){
+    if (!password.length) {
       alert('Password field is empty');
-      return ;
+      return;
     }
 
     try {
@@ -48,13 +48,13 @@ function Login() {
         loginData: response.data
       });
 
-      if(isRememberChecked){
+      if (isRememberChecked) {
         localStorage.setItem('loginData', JSON.stringify(response.data));
       } else {
         sessionStorage.setItem('loginData', JSON.stringify(response.data));
       }
-      
-      navigate('/home');
+
+      navigate('/');
 
     } catch (error) {
       alert(error.실패);
@@ -99,8 +99,8 @@ function Login() {
       />
 
       <Row marginTop={24}>
-        <CheckBox 
-          type="checkbox" 
+        <CheckBox
+          type="checkbox"
           checked={isRememberChecked}
           onChange={(event) => {
             setIsRememberChecked(event.target.checked);
