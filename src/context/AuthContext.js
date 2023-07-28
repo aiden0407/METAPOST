@@ -3,7 +3,7 @@ import { createContext, useReducer } from "react";
 
 //initial state
 const initialState = {
-  login: false,
+  loginData: undefined,
 };
 
 //create context
@@ -16,13 +16,13 @@ const reducer = (state, action) => {
     case 'LOGIN':
       return {
         ...state,
-        login: true,
+        loginData: action.loginData,
       };
 
       case 'LOGOUT':
         return {
           ...state,
-          login: false,
+          loginData: undefined,
         };
 
     default:
@@ -34,7 +34,6 @@ const reducer = (state, action) => {
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const value = { state, dispatch };
-  //console.log(`login: ${state.login}`);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
