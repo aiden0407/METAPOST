@@ -42,7 +42,7 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
 
     return (
         <PostBox onClick={() => {
-            navigate(`/post?postId=${postId}`);
+            navigate(`/post?post_id=${postId}`);
             window.scrollTo({ top: 0 });
         }}>
             <Row>
