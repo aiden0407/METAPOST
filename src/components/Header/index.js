@@ -1,6 +1,7 @@
 //React
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from 'context/AuthContext';
+import { AppContext } from 'context/AppContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -19,6 +20,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state: { loginData }, dispatch } = useContext(AuthContext);
+  const { dispatch: appDispatch } = useContext(AppContext);
   const [isToggleOpened, setIsToggleOpened] = useState(false);
 
   useEffect(() => {
@@ -70,8 +72,9 @@ function Header() {
   }
 
   function handleNavigateSearch() {
-    navigate('/search');
-    window.scrollTo({ top: 0 });
+    appDispatch({
+      type: 'OPEN_SEARCH_POPUP',
+    });
   }
 
   function handleNavigateJoin() {
