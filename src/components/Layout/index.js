@@ -16,7 +16,7 @@ function Layout({ children }) {
 
   const handleChangeColor = (value) => {
     switch (value) {
-      case '/':
+      case '/login':
       case '/signup/email':
       case '/signup/wallet':
         return '#FFFFFF';
@@ -28,7 +28,7 @@ function Layout({ children }) {
 
   const handleFooter = (value) => {
     switch (value) {
-      case '/':
+      case '/login':
       case '/signup/email':
       case '/signup/wallet':
       case '/profile/settings':
