@@ -8,18 +8,22 @@ import { AppProvider } from 'context/AppContext';
 import Layout from 'components/Layout';
 
 //Pages
+import Home from 'pages/Home';
+import Post from 'pages/Post';
+import Write from 'pages/Write';
+import Notice from 'pages/Notice';
+
 import Login from 'pages/Login';
 import SignUpEmail from 'pages/SignUp/Email';
 import SignUpWallet from 'pages/SignUp/Wallet';
 
-import Home from 'pages/Home';
-import Post from 'pages/Post';
-import Write from 'pages/Write';
-
 import Profile from 'pages/Profile';
 import ProfileSettings from 'pages/Profile/Settings';
 
-import Notice from 'pages/Notice';
+import Community from 'pages/Community';
+import CommunityRanking from 'pages/Community/Ranking';
+import CommunityCreate from 'pages/Community/Create';
+import CommunitySettings from 'pages/Community/Settings';
 
 function App() {
   return (
@@ -31,6 +35,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/post" element={<Post />} />
               <Route path="/write" element={<Write />} />
+              <Route path="/notice" element={<Notice />} />
 
               <Route path="/login" element={<Login />} />
               <Route path="/signup/email" element={<SignUpEmail />} />
@@ -38,8 +43,11 @@ function App() {
 
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/settings" element={<ProfileSettings />} />
-
-              <Route path="/notice" element={<Notice />} />
+              
+              <Route path="/community" element={<Community />} />
+              <Route path="/community/ranking" element={<CommunityRanking />} />
+              <Route path="/community/create" element={<CommunityCreate />} />
+              <Route path="/community/settings" element={<CommunitySettings />} />
             </Routes>
           </Layout>
         </BrowserRouter>
