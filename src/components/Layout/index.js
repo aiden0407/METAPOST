@@ -35,6 +35,8 @@ function Layout({ children }) {
       case '/signup/wallet':
       case '/search':
       case '/profile/settings':
+      case '/community/create':
+      case '/community/settings':
         return false;
 
       default:
