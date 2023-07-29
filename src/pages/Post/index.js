@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from 'context/AuthContext';
 import { AppContext } from 'context/AppContext';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -26,6 +26,7 @@ import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Post() {
 
+  const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const postId = searchParams.get('post_id');
@@ -39,7 +40,7 @@ function Post() {
 
   useEffect(() => {
     initPostDetail();
-  }, []);
+  }, [postId]);
 
   const initPostDetail = async function () {
     try {
@@ -96,27 +97,23 @@ function Post() {
       }
     } else {
       alert('You need to login');
+      navigate('/login');
     }
   };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
-
-    if (file) {
-      handlePostCommentImage(file);
-    }
+      if (file) {
+        handlePostCommentImage(file);
+      }
   };
 
   const handlePostCommentImage = async function (file) {
-    if(loginData){
-      try {
-        const response = await uploadImage(loginData.token.access, 'comment', file);
-        setMediaUrl(response.data);
-      } catch (error) {
-        alert(error);
-      }
-    } else {
-      alert('You need to login');
+    try {
+      const response = await uploadImage(loginData.token.access, 'comment', file);
+      setMediaUrl(response.data);
+    } catch (error) {
+      alert(error);
     }
   };
 
@@ -195,11 +192,21 @@ function Post() {
           />
 
           <Row marginTop={8}>
-            <PostImageButton onClick={() => fileInputRef.current.click()}>
-              <FileInput
+            <PostImageButton
+              onClick={() => {
+                if (loginData) {
+                  fileInputRef.current.click()
+                } else {
+                  alert('You need to login');
+                  navigate('/login');
+                }
+              }}
+            >
+              <input
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileInputChange}
+                style={{ display: 'none'}}
               />
               <Image src={imageIcon} width={16} />
             </PostImageButton>
@@ -342,10 +349,6 @@ const CommentWrittenBox = styled.div`
   display: flex;
   flex-direction: column;
 `
-
-const FileInput = styled.input`
-  display: none;
-`;
 
 const StyledImage = styled(Image)`
   cursor: pointer;
