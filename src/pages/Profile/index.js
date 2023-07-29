@@ -107,7 +107,7 @@ function Profile() {
                   if(isCommunityExpanded){
                     return (
                       <Row key={`post_${item.id}`}>
-                        <Image src={item.logo_url} width={24} height={24} onError={handleImageError} />
+                        <Image src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
                         <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                         {
                           item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
@@ -118,7 +118,7 @@ function Profile() {
                     if (index < 5) {
                       return (
                         <Row key={`post_${item.id}`}>
-                          <Image src={item.logo_url} width={24} height={24} onError={handleImageError} />
+                          <Image src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
                           <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                           {
                             item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
