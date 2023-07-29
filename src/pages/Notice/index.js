@@ -7,9 +7,9 @@ import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 
 //Assets
-import iconExample5 from 'assets/icons/icon_example_5.png';
+import defaultProfile from 'assets/icons/icon_default_profile.png';
 
-function Post() {
+function Notice() {
 
   const noticeText = `Effective June 16, 2023. Last Revised June 16, 2023
 
@@ -18,9 +18,9 @@ function Post() {
   Any data we collect is used primarily to provide our services, which are focused on allowing people to come together and form communities, the vast majority of which are public. If you have questions about how we use your data, you can always ask us for more information.`
 
   return (
-    <PostContainer>
+    <NoticeContainer>
       <CommunityBox>
-        <Image src={iconExample5} width={16} borderRadius="2px" />
+        <Image src={defaultProfile} width={16} borderRadius="2px" />
         <Text B3 medium color={COLOR.N700} marginLeft={8}>METAPOST</Text>
       </CommunityBox>
 
@@ -33,13 +33,13 @@ function Post() {
 
         <Text B0 color={COLOR.N800} marginTop={16}>{noticeText}</Text>
       </ContentBox>
-    </PostContainer>
+    </NoticeContainer>
   );
 }
 
-export default Post;
+export default Notice;
 
-const PostContainer = styled.div`
+const NoticeContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
