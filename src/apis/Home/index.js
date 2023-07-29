@@ -74,7 +74,7 @@ export const writePost = async function (accessToken, communityId, type, title, 
         type: type,
         title: title,
         description: description,
-        //media_url: mediaUrl,
+        media_url: mediaUrl,
       }
     }
     const response = await axios(options);
