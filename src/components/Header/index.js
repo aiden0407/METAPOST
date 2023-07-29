@@ -56,6 +56,10 @@ function Header() {
           case '/write':
           case '/profile':
           case '/profile/settings':
+          case '/community':
+          case '/community/create':
+          case '/community/settings':
+            alert('You need to login')
             navigate('/login', { replace: true });
             break;
     
@@ -64,7 +68,7 @@ function Header() {
         }
       }
     }
-  }, [location.pathname, dispatch, navigate]);
+  }, [location.pathname, dispatch, navigate, loginData]);
 
   function handleNavigateHome() {
     navigate('/');
@@ -157,6 +161,7 @@ const ProfileIcon = styled.img`
   margin-left: 16px;
   width: 32px;
   height: 32px;
+  border-radius: 4px;
   cursor: pointer;
 `
 
