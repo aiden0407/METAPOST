@@ -1,7 +1,8 @@
 //React
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { AuthContext } from 'context/AuthContext';
 import { AppContext } from 'context/AppContext';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -11,7 +12,7 @@ import { Image } from 'components/Image';
 import { Row, Column, FlexBox } from 'components/Flex';
 
 //Api
-import { postComment, likedComment } from 'apis/Home';
+import { likedComment, postComment, uploadImage } from 'apis/Home';
 
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
@@ -26,11 +27,13 @@ import defaultProfile from 'assets/icons/icon_default_profile.png';
 
 function Comment({ postId, commentId, profileImage, userId, nftName, text, image, like, dislike, createdAt, depth }) {
 
+    const navigate = useNavigate();
     const { state: { loginData } } = useContext(AuthContext);
     const { dispatch } = useContext(AppContext);
     const [isCommentOpend, setIsCommentOpend] = useState(false);
     const [comment, setComment] = useState('');
     const [mediaUrl, setMediaUrl] = useState();
+    const fileInputRef = useRef(null);
 
     function getTimeDifference(time) {
         const currentDate = new Date();
@@ -52,19 +55,6 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
         }
     }
 
-    const handlePostComment = async function () {
-        if (loginData) {
-            try {
-                await postComment(loginData.token.access, null, commentId, comment, mediaUrl);
-                window.location.reload();
-            } catch (error) {
-                alert(error);
-            }
-        } else {
-            alert('You need to login');
-        }
-    };
-
     const handleLikedComment = async function (liked) {
         if (loginData) {
             try {
@@ -75,6 +65,7 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
             }
         } else {
             alert('You need to login');
+            navigate('/login');
         }
     };
 
@@ -85,6 +76,31 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
             id: commentId
         });
     }
+
+    const handleFileInputChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handlePostCommentImage(file);
+        }
+      };
+    
+      const handlePostCommentImage = async function (file) {
+        try {
+          const response = await uploadImage(loginData.token.access, 'comment', file);
+          setMediaUrl(response.data);
+        } catch (error) {
+          alert(error);
+        }
+      };
+
+      const handlePostComment = async function () {
+        try {
+            await postComment(loginData.token.access, null, commentId, comment, mediaUrl);
+            window.location.reload();
+        } catch (error) {
+            alert(error);
+        }
+      };
 
     return (
         <PostBox depth={depth}>
@@ -117,7 +133,17 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
                     <Image src={dislikeIcon} width={12} marginTop={1} />
                     <Text B4 medium color={COLOR.N700}>{dislike}</Text>
                 </StyledRow>
-                <StyledRow gap={4} onClick={() => setIsCommentOpend(!isCommentOpend)}>
+                <StyledRow
+                    gap={4}
+                    onClick={() => {
+                        if (loginData) {
+                            setIsCommentOpend(!isCommentOpend);
+                        } else {
+                            alert('You need to login');
+                            navigate('/login');
+                        }
+                    }}
+                >
                     <Image src={commentIcon} width={12} marginTop={2} />
                     <Text B4 medium color={COLOR.N600}>Comment</Text>
                 </StyledRow>
@@ -130,9 +156,14 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                     />
-
                     <Row marginTop={8}>
-                        <PostImageButton>
+                        <PostImageButton onClick={() => fileInputRef.current.click()}>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileInputChange}
+                                style={{ display: 'none' }}
+                            />
                             <Image src={imageIcon} width={16} />
                         </PostImageButton>
                         <FlexBox />
