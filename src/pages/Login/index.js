@@ -30,12 +30,10 @@ function Login() {
   const [isWalletClicked, setIsWalletClicked] = useState(false);
 
   const handleSignIn = async function () {
-
     if (!email.length) {
       alert('Email field is empty');
       return;
     }
-
     if (!password.length) {
       alert('Password field is empty');
       return;
@@ -94,6 +92,11 @@ function Login() {
         value={password}
         onChange={(event) => {
           setPassword(event.target.value);
+        }}
+        onKeyUp={(event) => {
+          if (event.key === 'Enter') {
+            handleSignIn();
+          }
         }}
         marginTop={8}
       />
