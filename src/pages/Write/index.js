@@ -11,8 +11,8 @@ import { Image } from 'components/Image';
 import { Row, FlexBox, Box } from 'components/Flex';
 
 //Api
-import { writePost } from 'apis/Home';
-import { getCommunityList } from 'apis/Community';
+import { writePost, uploadImage } from 'apis/Home';
+import { getMyCommunityList } from 'apis/Community';
 
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
@@ -34,25 +34,43 @@ function Write() {
   const [title, setTitle] = useState('');
   const [alignOption, setAlignOption] = useState('left');
   const [description, setDescription] = useState('');
+  const [mediaUrl, setMediaUrl] = useState();
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if(loginData){
+    if (loginData) {
       initWrite();
     }
   }, [loginData]);
 
   const initWrite = async function () {
     try {
-      const response = await getCommunityList(loginData.token.access);
+      const response = await getMyCommunityList(loginData.token.access);
       setCommunityData(response.data);
-      if(response.data.length){
+      if (response.data.length) {
         setSelectedCommunity(response.data[0]);
       }
     } catch (error) {
       alert(error);
     }
   };
-  
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handlePostImage(file);
+    }
+  };
+
+  const handlePostImage = async function (file) {
+    try {
+      const response = await uploadImage(loginData.token.access, 'post', file);
+      setMediaUrl(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   const handleDone = async function () {
     if (!title.length) {
       alert('Title field is empty');
@@ -65,7 +83,7 @@ function Write() {
     }
 
     try {
-      await writePost(loginData.token.access, selectedCommunity?.pk, (isNoticeChecked?'notice':'normal'), title, description, null);
+      await writePost(loginData.token.access, selectedCommunity?.pk, (isNoticeChecked ? 'notice' : 'normal'), title, description, mediaUrl);
       navigate('/');
       window.scrollTo({ top: 0 });
     } catch (error) {
@@ -80,49 +98,49 @@ function Write() {
   return (
     <WriteContainer>
       <ToggleButton onClick={() => {
-        if(communityData?.length){
+        if (communityData?.length) {
           setIsToggleOpened(!isToggleOpened)
         }
       }}>
         {
           selectedCommunity
-          ?<Image src={selectedCommunity.fields?.logo_url} width={24} onError={handleImageError} />
-          :<Box width={24} height={24} />
+            ? <Image src={selectedCommunity.fields?.logo_url} width={24} onError={handleImageError} />
+            : <Box width={24} height={24} />
         }
         {
-          communityData?.length 
-          ? <Text B3 medium color={COLOR.N1000} marginLeft={8}>{selectedCommunity?.fields?.title ?? 'None'}</Text>
-          : <Text B3 medium color={COLOR.N600} marginLeft={8}>Community not found</Text>
+          communityData?.length
+            ? <Text B3 medium color={COLOR.N1000} marginLeft={8}>{selectedCommunity?.fields?.title ?? 'None'}</Text>
+            : <Text B3 medium color={COLOR.N600} marginLeft={8}>Community not found</Text>
         }
         <FlexBox />
         {
-          communityData?.length 
-          ? <Image src={arrowNextIcon} width={24} style={{ transform: "rotate(90deg)" }} />
-          : null
+          communityData?.length
+            ? <Image src={arrowNextIcon} width={24} style={{ transform: "rotate(90deg)" }} />
+            : null
         }
         {
           isToggleOpened
           && <ToggleMenu>
             <StyledRow
-             onClick={() => {
-              setSelectedCommunity();
-              setIsToggleOpened(!isToggleOpened);
-            }}>
+              onClick={() => {
+                setSelectedCommunity();
+                setIsToggleOpened(!isToggleOpened);
+              }}>
               <Box width={24} height={24} />
               <Text B3 medium color={selectedCommunity?.fields?.title ? COLOR.N700 : '#000000'} marginLeft={8}>None</Text>
             </StyledRow>
 
             {communityData.map((item) =>
-            <StyledRow
-              key={`community_${item.pk}`}
-              onClick={() => {
-                setSelectedCommunity(item);
-                setIsToggleOpened(!isToggleOpened);
-            }}>
-              <Image src={item?.fields?.logo_url} width={24} height={24} onError={handleImageError} />
-              <Text B3 medium color={selectedCommunity?.fields?.title === item.fields.title ? '#000000' : COLOR.N700} marginLeft={8}>{item.fields.title}</Text>
-            </StyledRow>)
-          }
+              <StyledRow
+                key={`community_${item.pk}`}
+                onClick={() => {
+                  setSelectedCommunity(item);
+                  setIsToggleOpened(!isToggleOpened);
+                }}>
+                <Image src={item?.fields?.logo_url} width={24} height={24} onError={handleImageError} />
+                <Text B3 medium color={selectedCommunity?.fields?.title === item.fields.title ? '#000000' : COLOR.N700} marginLeft={8}>{item.fields.title}</Text>
+              </StyledRow>)
+            }
           </ToggleMenu>
         }
       </ToggleButton>
@@ -154,7 +172,13 @@ function Write() {
           <OptionButton on={alignOption === 'center'} onClick={() => setAlignOption('center')}>
             <Image src={alignCenterIcon} width={20} />
           </OptionButton>
-          <OptionButton>
+          <OptionButton onClick={() => fileInputRef.current.click()}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileInputChange}
+              style={{ display: 'none' }}
+            />
             <Image src={imageIcon} width={20} />
           </OptionButton>
           <OptionButton>
@@ -173,7 +197,7 @@ function Write() {
         />
       </WriteBox>
 
-      <DoneButton onClick={()=>handleDone()}>
+      <DoneButton onClick={() => handleDone()}>
         <Text H5 bold color="#FFFFFF">Done</Text>
       </DoneButton>
     </WriteContainer>
