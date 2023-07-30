@@ -1,8 +1,12 @@
 //React
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from 'context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+
+//Web3
+import Web3Modal from "web3modal";
+import { ethers } from 'ethers';
 
 //Components
 import { COLOR } from 'constants/design';
@@ -28,6 +32,39 @@ function Login() {
   const [password, setPassword] = useState('');
   const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
+  const [account, setAccount] = useState();
+  const [network, setNetwork] = useState();
+  
+  console.log(account);
+  console.log(network);
+
+  useEffect(() => {
+    for (const key in localStorage) {
+      if (key.includes("-walletlink:https://www.walletlink.org:")) {
+        localStorage.removeItem(key);
+      }
+    }
+  }, []);
+
+  async function connectWallet() {
+    let web3Modal = new Web3Modal({
+      cacheProvider: false,
+    });
+
+    try {
+      const provider = await web3Modal.connect();
+      const library = new ethers.providers.Web3Provider(provider);
+      const accounts = await library.listAccounts();
+      const network = await library.getNetwork();
+      if (accounts) setAccount(accounts[0]);
+      setNetwork(network);
+    } catch (error) {
+      if(error === 'Modal closed by user') {
+        alert('To use wallet, extension must be installed');
+      }
+      console.log(error);
+    }
+  }
 
   const handleSignIn = async function () {
     if (!email.length) {
@@ -121,11 +158,11 @@ function Login() {
       {
         isWalletClicked
           ? <ToggleMenu>
-            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+            <StyledRow onClick={connectWallet}>
               <Image src={metaMaskIcon} width={24} />
               <Text B1 medium marginLeft={8}>MetaMask</Text>
             </StyledRow>
-            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+            <StyledRow onClick={connectWallet}>
               <Image src={coinbaseIcon} width={24} />
               <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
             </StyledRow>
