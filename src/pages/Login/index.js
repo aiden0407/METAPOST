@@ -7,6 +7,8 @@ import styled from 'styled-components';
 //Web3
 import Web3Modal from "web3modal";
 import { ethers } from 'ethers';
+import { useWeb3Modal } from '@web3modal/react'
+import { useAccount } from 'wagmi'
 
 //Components
 import { COLOR } from 'constants/design';
@@ -33,18 +35,36 @@ function Login() {
   const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
   const [account, setAccount] = useState();
-  const [network, setNetwork] = useState();
   
   console.log(account);
-  console.log(network);
 
   useEffect(() => {
     for (const key in localStorage) {
       if (key.includes("-walletlink:https://www.walletlink.org:")) {
         localStorage.removeItem(key);
       }
+      if (key.includes("wc@2:")) {
+        localStorage.removeItem(key);
+      }
     }
   }, []);
+
+  function handleWalletClick() {
+    setIsWalletClicked(true);
+  }
+
+  const { open, close } = useWeb3Modal();
+  const { address, isConnected } = useAccount()
+  function handleWalletConnect() {
+    if(!isConnected){
+      open();
+    }
+  }
+  useEffect(() => {
+    if(isConnected) {
+      setAccount(address);
+    }
+  }, [isConnected]);
 
   async function connectWallet() {
     let web3Modal = new Web3Modal({
@@ -55,12 +75,15 @@ function Login() {
       const provider = await web3Modal.connect();
       const library = new ethers.providers.Web3Provider(provider);
       const accounts = await library.listAccounts();
-      const network = await library.getNetwork();
       if (accounts) setAccount(accounts[0]);
-      setNetwork(network);
     } catch (error) {
-      if(error === 'Modal closed by user') {
-        alert('To use wallet, extension must be installed');
+      if (error === 'Modal closed by user') {
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobileDevice) {
+          alert('We were unable to use the wallet in this device');
+        } else {
+          alert('To use this wallet, extension must be installed');
+        }
       }
       console.log(error);
     }
@@ -94,14 +117,6 @@ function Login() {
     } catch (error) {
       alert(error.실패);
     }
-  }
-
-  function handleWalletClick() {
-    setIsWalletClicked(true);
-  }
-
-  function handleNavigateSignUpWallet() {
-    navigate('/signup/wallet');
   }
 
   function handleNavigateSignUpEmail() {
@@ -166,7 +181,7 @@ function Login() {
               <Image src={coinbaseIcon} width={24} />
               <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
             </StyledRow>
-            <StyledRow onClick={() => handleNavigateSignUpWallet()}>
+            <StyledRow onClick={() => handleWalletConnect()}>
               <Image src={walletConnectIcon} width={24} />
               <Text B1 medium marginLeft={8}>WalletConnect</Text>
             </StyledRow>
