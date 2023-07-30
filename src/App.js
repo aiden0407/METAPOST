@@ -25,32 +25,55 @@ import CommunityRanking from 'pages/Community/Ranking';
 import CommunityCreate from 'pages/Community/Create';
 import CommunitySettings from 'pages/Community/Settings';
 
+//Web3
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { Web3Modal } from '@web3modal/react'
+import { configureChains, createConfig, WagmiConfig } from 'wagmi'
+import { arbitrum, mainnet, polygon } from 'wagmi/chains'
+
+const chains = [arbitrum, mainnet, polygon]
+const projectId = '079ab2c771dcc68681fc2133be4e851d'
+
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ projectId, chains }),
+  publicClient
+})
+const ethereumClient = new EthereumClient(wagmiConfig, chains)
+
 function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/post" element={<Post />} />
-              <Route path="/write" element={<Write />} />
-              <Route path="/notice" element={<Notice />} />
 
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup/email" element={<SignUpEmail />} />
-              <Route path="/signup/wallet" element={<SignUpWallet />} />
+        <WagmiConfig config={wagmiConfig}>
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/post" element={<Post />} />
+                <Route path="/write" element={<Write />} />
+                <Route path="/notice" element={<Notice />} />
 
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/profile/settings" element={<ProfileSettings />} />
-              
-              <Route path="/community" element={<Community />} />
-              <Route path="/community/ranking" element={<CommunityRanking />} />
-              <Route path="/community/create" element={<CommunityCreate />} />
-              <Route path="/community/settings" element={<CommunitySettings />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup/email" element={<SignUpEmail />} />
+                <Route path="/signup/wallet" element={<SignUpWallet />} />
+
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/settings" element={<ProfileSettings />} />
+
+                <Route path="/community" element={<Community />} />
+                <Route path="/community/ranking" element={<CommunityRanking />} />
+                <Route path="/community/create" element={<CommunityCreate />} />
+                <Route path="/community/settings" element={<CommunitySettings />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </WagmiConfig>
+
+        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+
       </AppProvider>
     </AuthProvider>
   );
