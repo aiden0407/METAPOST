@@ -48,7 +48,7 @@ export const uploadImage = async function (accessToken, model, file) {
       method: 'POST',
       headers: {
           'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
       },
       data: formData,
     }
@@ -75,6 +75,27 @@ export const writePost = async function (accessToken, communityId, type, title, 
         title: title,
         description: description,
         media_url: mediaUrl,
+      }
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
+export const likedPost = async function (accessToken, postId, liked) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/post/reaction`,
+      method: 'POST',
+      headers: {
+          Authorization: `Bearer ${accessToken}`
+      },
+      data: {
+        post_id: postId,
+        liked: liked
       }
     }
     const response = await axios(options);
@@ -129,11 +150,14 @@ export const likedComment = async function (accessToken, commentId, liked) {
   }
 }
 
-export const reportContents = async function (title, description, refernceId, refernceType) {
+export const reportContents = async function (accessToken, title, description, refernceId, refernceType) {
   try {
     let options = {
       url: `${process.env.REACT_APP_API_HOST}/report`,
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      },
       data: {
         title: title,
         description: description,
