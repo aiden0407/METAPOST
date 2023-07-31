@@ -19,15 +19,13 @@ export const loginByEmail = async function (email, password) {
     }
 }
 
-export const loginByWallet = async function (nickname, walletAdress, nftId) {
+export const loginByWallet = async function (walletAdress) {
     try {
         let options = {
             url: `${process.env.REACT_APP_API_HOST}/wallet-sign-in`,
             method: 'POST',
             data: {
-                nickname: nickname,
-                wallet_adress: walletAdress,
-                nft_id: nftId
+                wallet_address: walletAdress,
             }
         }
         const response = await axios(options);
