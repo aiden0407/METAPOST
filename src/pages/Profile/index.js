@@ -1,7 +1,7 @@
 //React
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from 'context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -12,7 +12,7 @@ import { Row } from 'components/Flex';
 import Preview from 'components/Preview';
 
 //Api
-import { getUserData } from 'apis/Profile';
+import { getMyProfileData, getUserProfileData } from 'apis/Profile';
 
 //Assets
 import settingIcon from 'assets/icons/setting.svg';
@@ -24,6 +24,10 @@ import defaultProfile from 'assets/icons/icon_default_profile.png';
 function Profile() {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const profileId = searchParams.get('profile_id');
+
   const { state: { loginData } } = useContext(AuthContext);
   const [userData, setUserData] = useState();
   const [isDescriptionOver2Lines, setIsDescriptionOver2Lines] = useState(false);
@@ -38,17 +42,30 @@ function Profile() {
       const lineCount = containerHeight / lineHeight;
       setIsDescriptionOver2Lines(lineCount > 2);
     }
-  }, [userData?.memo]);
+  }, [userData?.description]);
 
   useEffect(() => {
-    if(loginData){
-      initUserProfile();
+    if(profileId) {
+      initUserProfile()
+    } else {
+      if(loginData){
+        initMyProfile();
+      }
     }
-  }, [loginData]);
+  }, [location, loginData]);
+
+  const initMyProfile = async function () {
+    try {
+      const response = await getMyProfileData(loginData.token.access);
+      setUserData(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   const initUserProfile = async function () {
     try {
-      const response = await getUserData(loginData.token.access);
+      const response = await getUserProfileData(profileId);
       setUserData(response.data);
     } catch (error) {
       alert(error);
@@ -72,10 +89,12 @@ function Profile() {
           <Image src={nftIcon} width={16} />
           <Text B1 medium color={userData.nft_name ? COLOR.N800 : COLOR.N600} marginLeft={4}>{userData.nft_name ?? 'The NFT has not been registered yet'}</Text>
         </Row>
-        <SettingImage src={settingIcon} width={20} onClick={() => {
-          navigate(`/profile/settings`);
-          window.scrollTo({ top: 0 });
-        }} />
+        {
+          !profileId && <SettingImage src={settingIcon} width={20} onClick={() => {
+            navigate(`/profile/settings`);
+            window.scrollTo({ top: 0 });
+          }} /> 
+        }
       </ProfileBox>
 
       <ProfileDescriptionContainer
@@ -83,7 +102,7 @@ function Profile() {
         ref={containerRef}
         style={!isDescriptionOver2Lines ? { display: 'flex', justifyContent: 'center' } : {}}
       >
-        {userData.memo ?? 'Description does not exist'}
+        {userData.description ?? 'Description does not exist'}
       </ProfileDescriptionContainer>
       <ExpandButton
         onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
@@ -97,7 +116,7 @@ function Profile() {
         }
       </ExpandButton>
 
-      <Text B1 bold color={COLOR.N1000} marginTop={24} marginLeft={12}>My community</Text>
+      <Text P2 color={COLOR.N1000} marginTop={24} marginLeft={12}>My community</Text>
       {
         userData.communities.length
           ? <>
@@ -106,8 +125,11 @@ function Profile() {
                 userData.communities.map((item, index) => {
                   if(isCommunityExpanded){
                     return (
-                      <Row key={`post_${item.id}`}>
-                        <Image src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
+                      <Row key={`community_${item.id}`} onClick={() => {
+                        navigate(`/community?community_id=${item.id}`);
+                        window.scrollTo({ top: 0 });
+                      }}>
+                        <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
                         <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                         {
                           item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
@@ -117,8 +139,11 @@ function Profile() {
                   } else {
                     if (index < 5) {
                       return (
-                        <Row key={`post_${item.id}`}>
-                          <Image src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
+                        <Row key={`post_${item.id}`} onClick={() => {
+                          navigate(`/community?community_id=${item.id}`);
+                          window.scrollTo({ top: 0 });
+                        }}>
+                          <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
                           <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                           {
                             item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
@@ -151,8 +176,7 @@ function Profile() {
           </NoContentsWrapper>
       }
 
-
-      <Text B1 bold color={COLOR.N1000} marginTop={24} marginLeft={12}>Post history</Text>
+      <Text P2 color={COLOR.N1000} marginTop={24} marginLeft={12}>Post history</Text>
       {
         userData.posts.length
           ? <ContentsWrapper>
@@ -267,6 +291,10 @@ const NoContentsWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+`
+
+const StyledImage = styled(Image)`
+  cursor: pointer;
 `
 
 const StyledText = styled(Text)`
