@@ -143,7 +143,7 @@ export const createCommunity = async function (accessToken, name, description, l
 export const editCommunity = async function (accessToken, communityId, name, description, logo, banner) {
   try {
     let options = {
-      url: `${process.env.REACT_APP_API_HOST}/community/edit`,
+      url: `${process.env.REACT_APP_API_HOST}/community/update`,
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
