@@ -45,6 +45,8 @@ function Search() {
     setSearchResult([]);
     if (searchText.length) {
       handleSearch(searchText, type);
+    } else {
+      setSelectedOption(type);
     }
   }
 
@@ -157,13 +159,21 @@ function Search() {
                       <ResultColumnUser>
                         {
                           searchResult.map((item) =>
-                            <StyledRow key={`comment_${item.pk}`}>
+                            <StyledRow
+                              key={`user_${item.pk}`}
+                              gap={4}
+                              onClick={() => {
+                                navigate(`/profile?profile_id=${item.pk}`);
+                                window.scrollTo({ top: 0 });
+                                handleSearchClose();
+                              }}
+                            >
                               <Image src={item.fields?.nft_thumbnail ?? defaultProfile} width={33} height={33} borderRadius="4px" />
                               <Column marginLeft={8} gap={4}>
                                 <Text B2 color={COLOR.N600} style={{ lineHeight: '100%' }}>{item.fields.nickname}</Text>
                                 <Row>
                                   <Image src={nftIcon} width={16} />
-                                  <Text B3 medium color={COLOR.N600} marginLeft={4}>{item.fields?.nft_title}</Text>
+                                  <Text B3 medium color={COLOR.N600} marginLeft={4}>{item.fields.nft_name}</Text>
                                 </Row>
                               </Column>
                             </StyledRow>
