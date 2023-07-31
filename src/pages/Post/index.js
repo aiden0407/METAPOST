@@ -13,7 +13,7 @@ import { Row, Column, FlexBox } from 'components/Flex';
 import Comment from 'components/Comment';
 
 //Api
-import { getPostDetail, postComment, uploadImage } from 'apis/Home';
+import { getPostDetail, likedPost, postComment, uploadImage } from 'apis/Home';
 
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
@@ -84,10 +84,24 @@ function Post() {
     }
   }
 
-  const handlePostComment = async function (commentId) {
+  const handleLikedPost = async function (liked) {
+    if (loginData) {
+        try {
+            await likedPost(loginData.token.access, postId, liked);
+            window.location.reload();
+        } catch (error) {
+            alert(error);
+        }
+    } else {
+        alert('You need to login');
+        navigate('/login');
+    }
+};
+
+  const handlePostComment = async function () {
     if(loginData){
       try {
-        await postComment(loginData.token.access, postId, commentId, comment, mediaUrl);
+        await postComment(loginData.token.access, postId, null, comment, mediaUrl);
         const response = await getPostDetail(postId);
         response.data.comments.reverse();
         setPostDetail(response.data);
@@ -165,12 +179,12 @@ function Post() {
         <Text B0 color={COLOR.N800} marginTop={16}>{postDetail.detail[0]?.description}</Text>
 
         <Row marginTop={48} gap={8} style={{ width: "100%", justifyContent: "center" }}>
-          <LongShortButton>
+          <LongShortButton onClick={()=>handleLikedPost(true)}>
             <Image src={longIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Long</Text>
             <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].liked_count}</Text>
           </LongShortButton>
-          <LongShortButton>
+          <LongShortButton onClick={()=>handleLikedPost(false)}>
             <Image src={shortIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Short</Text>
             <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].disliked_count}</Text>
@@ -181,7 +195,7 @@ function Post() {
       <CommentBox>
         <Row>
           <Image src={commentIcon} width={16} />
-          <Text B2 medium color={COLOR.N800} marginLeft={8}>All Commnet</Text>
+          <Text B2 medium color={COLOR.N800} marginLeft={8}>All Commnets</Text>
           <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.comments.length}</Text>
         </Row>
 
@@ -278,7 +292,6 @@ const ContentBox = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 `
 
 const LongShortButton = styled.div`
