@@ -1,5 +1,6 @@
 //React
 import { useState, useContext } from 'react';
+import { AuthContext } from 'context/AuthContext';
 import { AppContext } from 'context/AppContext';
 import styled from 'styled-components';
 
@@ -19,19 +20,24 @@ import menuDownIcon from 'assets/icons/menu_down.svg';
 
 function ReportPopup() {
 
+  const { state: { loginData } } = useContext(AuthContext);
   const { state: { reportData }, dispatch } = useContext(AppContext);
   const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Inappropriate contents');
   const [reportContent, setReportContent] = useState('');
 
   const submitReport = async function () {
+    if(!loginData){
+      alert('You need to login');
+      return;
+    }
     if (!reportContent.length) {
       alert('Description field is empty');
       return;
     }
 
     try {
-      await reportContents(selectedOption, reportContent, reportData.id, reportData.subject);
+      await reportContents(loginData.token.access, selectedOption, reportContent, reportData.id, reportData.subject);
       dispatch({ type: 'CLOSE_REPORT_POPUP' });
       alert('The report has been received');
     } catch (error) {
