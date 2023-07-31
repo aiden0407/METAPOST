@@ -19,6 +19,12 @@ export const COLOR = {
 }
 
 export const TYPOGRAPHY = {
+    P1: {
+        SIZE: '13px',
+    },
+    P2: {
+        SIZE: '12px',
+    },
     H1: {
         SIZE: '38px',
     },
