@@ -18,6 +18,12 @@ time, mark, audio, video {
 	vertical-align: baseline;
 	-webkit-tap-highlight-color: transparent;
 }
+
+@font-face {
+	font-family: 'AkiraExpanded'; /* 폰트 이름 설정 */
+	src: url('./assets/fonts/Akira_Expanded.otf') format('opentype'); /* 폰트 파일 경로 설정 */
+}
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
