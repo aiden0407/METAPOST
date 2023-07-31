@@ -1,7 +1,7 @@
 //React
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from 'context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -11,33 +11,101 @@ import { Image } from 'components/Image';
 import { BorderInput } from 'components/TextInput';
 import { Row } from 'components/Flex';
 
+//Api
+import { nftCheckByWallet, userNameCheck, registerByWallet } from 'apis/SignUp';
+
 //Assets
 import copyIcon from 'assets/icons/copy.svg';
 import profileIcon from 'assets/icons/profile.svg';
-
 import defaultProfile from 'assets/icons/icon_default_profile.png';
 import nftIcon from 'assets/icons/icon_nft.png';
 
-function SignUpEmail() {
+function SignUpWallet() {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const walletAdress = searchParams.get('wallet_address');
+
   const { dispatch } = useContext(AuthContext);
+  const [nftData, setNftData] = useState();
   const [userName, setUserName] = useState('');
-  const [isWalletClicked, setIsWalletClicked] = useState(false);
+  const [profile, setProfile] = useState();
+  const [agreePolicy, setAgreePolicy] = useState(false);
 
-  function handleConnectClick() {
-    setIsWalletClicked(true);
+  useEffect(() => {
+    if(walletAdress){
+      initSignUpWallet();
+    }else{
+      alert('Invalid access');
+      window.history.back();
+    }
+  }, [walletAdress]);
+
+  const initSignUpWallet = async function () {
+    try {
+      const response = await nftCheckByWallet(walletAdress);
+      setNftData(response);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  function maskWalletAddress(walletAddress) {
+    const maskedAddress = walletAddress?.replace(/^(.{8}).+(.{4})$/, '$1...$2');
+    return maskedAddress;
   }
 
-  function handleConnectWallet() {
+  const checkUserNameAvailability = async function () {
+    try {
+      const response = await userNameCheck(userName);
+      return response.data;
+    } catch (error) {
+      alert(error);
+    }
   }
 
-  function handleDone() {
-    dispatch({
-      type: 'LOGIN',
-    });
-    sessionStorage.setItem('login', true);
-    navigate('/', { replace: true });
+  const handleDone = async function () {
+    if(!userName.length){
+      alert('Please enter your nickname');
+      return ;
+    }
+
+    if(!agreePolicy){
+      alert('You did not agree to the terms and conditions');
+      return ;
+    }
+
+    try {
+      const nicknameAlreadyUsed = await checkUserNameAvailability();
+  
+      if (!nicknameAlreadyUsed) {
+        const response = await registerByWallet(walletAdress, userName, profile);
+
+        dispatch({
+          type: 'LOGIN',
+          loginData: response.data
+        });
+        sessionStorage.setItem('loginData', JSON.stringify(response.data));
+        
+        navigate('/', { replace: true });
+        window.scrollTo({ top: 0 });
+
+      } else {
+        alert('The user name is already in use');
+      }
+    } catch (error) {
+      if(error?.uid){
+        alert(error?.uid[0]);
+      }
+      if(error?.nickname){
+        alert(error?.nickname[0]);
+      }
+    }
+  }
+
+  if(!walletAdress){
+    return ;
   }
 
   return (
@@ -45,14 +113,14 @@ function SignUpEmail() {
       <Text H3 bold>Complete Sign up</Text>
 
       <CenterWrapper>
-        <Image src={defaultProfile} width={80} borderRadius="6px" />
+        <Image src={profile ?? defaultProfile} width={80} borderRadius="6px" />
         <Text B1 medium color={COLOR.N700} marginTop={userName ? 12 : 26}>{userName}</Text>
       </CenterWrapper>
 
       <Text B1 medium color={COLOR.N700} marginTop={40}>Wallet</Text>
       <WalletAdressBox>
         <Row>
-          <Text B1 medium color={COLOR.N700}>0x12r45... 6HJ9</Text>
+          <Text B1 medium color={COLOR.N700}>{maskWalletAddress(walletAdress)}</Text>
           <StyledImage src={copyIcon} width={16} marginLeft={8} />
         </Row>
       </WalletAdressBox>
@@ -79,9 +147,21 @@ function SignUpEmail() {
 
       <CenterWrapper>
         <Row marginTop={8}>
-          <CheckBox type="checkbox" />
+          <CheckBox
+            type="checkbox"
+            checked={agreePolicy}
+            onChange={(event) => {
+              setAgreePolicy(event.target.checked);
+            }}
+          />
           <Text B1 medium color={COLOR.N700} marginLeft={8}>I agree to the&nbsp;</Text>
-          <StyledText B1 medium color={COLOR.N700}>Terms and Conditions</StyledText>
+          <StyledText B1 medium color={COLOR.N700}
+            onClick={() => {
+              window.open('/terms', '_blank');
+            }}
+          >
+            Terms and Conditions
+          </StyledText>
         </Row>
       </CenterWrapper>
 
@@ -92,7 +172,7 @@ function SignUpEmail() {
   );
 }
 
-export default SignUpEmail;
+export default SignUpWallet;
 
 const LoginContainer = styled.div`
   width: 100%;
