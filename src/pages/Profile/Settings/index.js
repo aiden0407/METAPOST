@@ -12,7 +12,7 @@ import { BorderInput } from 'components/TextInput';
 import { Row } from 'components/Flex';
 
 //Api
-import { getUserData, editUserData } from 'apis/Profile';
+import { getMyProfileData, editUserData } from 'apis/Profile';
 
 //Assets
 import walletIcon from 'assets/icons/wallet.svg';
@@ -23,42 +23,69 @@ import defaultProfile from 'assets/icons/icon_default_profile.png';
 function ProfileSettings() {
 
   const navigate = useNavigate();
-  const { state: { loginData } } = useContext(AuthContext);
+  const { state: { loginData }, dispatch } = useContext(AuthContext);
 
   const [userData, setUserData] = useState();
-  const [userName, setUserName] = useState('');
-  const [description, setDescription] = useState('');
+  const [userName, setUserName] = useState();
+  const [description, setDescription] = useState();
 
   const [walletAdress, setWalletAdress] = useState();
   const [nftId, setNftId] = useState();
 
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
+  const [email, setEmail] = useState();
+  const [code, setCode] = useState();
   const [isEmailAuthChecked, setIsEmailAuthChecked] = useState(false);
 
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [password, setPassword] = useState();
+  const [passwordConfirm, setPasswordConfirm] = useState();
 
   useEffect(() => {
-    if(loginData){
+    if (loginData) {
       initUserProfile();
     }
   }, [loginData]);
 
   const initUserProfile = async function () {
     try {
-      const response = await getUserData(loginData.token.access);
+      const response = await getMyProfileData(loginData.token.access);
       setUserData(response.data);
-      setUserName(response.nickname);
-      setDescription(response.memo);
+      setUserName(response.data.nickname);
+      setDescription(response.data.description ?? '');
+      setWalletAdress(response.data.wallet_address ?? undefined);
+      setNftId(response.data.nft_id ?? undefined);
     } catch (error) {
       alert(error);
     }
   };
 
   const handleDone = async function () {
+    if(password && !passwordConfirm){
+      alert('Password confirmation field is Empty');
+      return ;
+    }
+
+    if(!password && passwordConfirm){
+      alert('Password field is Empty');
+      return ;
+    }
+
+    if(password && passwordConfirm && password!==passwordConfirm){
+      alert('Passwords do not match');
+      return ;
+    }
+
     try {
-      await editUserData(loginData.token.access, (isEmailAuthChecked ? email : userData.uid), password, userName, walletAdress, nftId);
+      const response = await editUserData(loginData.token.access, (isEmailAuthChecked ? email : undefined), password, (loginData.user.nickname === userName ? undefined : userName ), (loginData.user.wallet_address === walletAdress ? undefined : walletAdress ), nftId, description);
+      dispatch({
+        type: 'PROFILE_UPDATE',
+        profileData: response.data
+      });
+      const localStorageData = localStorage.getItem('loginData');
+      if (localStorageData) {
+        localStorage.setItem('loginData', JSON.stringify(response.data));
+      } else {
+        sessionStorage.setItem('loginData', JSON.stringify(response.data));
+      }
       navigate('/profile');
       window.scrollTo({
         top: 0,
@@ -114,7 +141,7 @@ function ProfileSettings() {
       <ContentBox>
         <Row>
           <Text Text H5 bold color={COLOR.N1000}>Description</Text>
-          <Text Text B2 medium color={COLOR.N600} marginLeft={24}>{description?.length}/300</Text>
+          <Text Text B2 medium color={COLOR.N600} marginLeft={24}>{description?.length ?? 0}/300</Text>
         </Row>
         <DescriptionInput
           value={description}
@@ -133,35 +160,38 @@ function ProfileSettings() {
         </WalletAdressBox>
       </ContentBox>
 
-      <ContentBox>
-        <Text Text H5 bold color={COLOR.N1000}>E-mail</Text>
-        <Row marginTop={16}>
-          <BorderInput
-            type="text"
-            placeholder="your@example.com"
-            value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-            }}
-            style={{ fontSize: '15px', fontWeight: '400' }}
-          />
-          <SmallButton><Text B1 medium color={COLOR.N800}>Send</Text></SmallButton>
-        </Row>
+      {
+        !loginData.user?.uid
+        && <ContentBox>
+          <Text Text H5 bold color={COLOR.N1000}>E-mail</Text>
+          <Row marginTop={16}>
+            <BorderInput
+              type="text"
+              placeholder="your@example.com"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+              }}
+              style={{ fontSize: '15px', fontWeight: '400' }}
+            />
+            <SmallButton><Text B1 medium color={COLOR.N800}>Send</Text></SmallButton>
+          </Row>
 
-        <Text B1 medium color={COLOR.N700} marginTop={16}>Confirmation Code</Text>
-        <Row marginTop={16}>
-          <BorderInput
-            type="text"
-            placeholder="code"
-            value={code}
-            onChange={(event) => {
-              setCode(event.target.value);
-            }}
-            style={{ fontSize: '15px', fontWeight: '400' }}
-          />
-          <SmallButton><Text B1 medium color={COLOR.N800}>Confirm</Text></SmallButton>
-        </Row>
-      </ContentBox>
+          <Text B1 medium color={COLOR.N700} marginTop={16}>Confirmation Code</Text>
+          <Row marginTop={16}>
+            <BorderInput
+              type="text"
+              placeholder="code"
+              value={code}
+              onChange={(event) => {
+                setCode(event.target.value);
+              }}
+              style={{ fontSize: '15px', fontWeight: '400' }}
+            />
+            <SmallButton><Text B1 medium color={COLOR.N800}>Confirm</Text></SmallButton>
+          </Row>
+        </ContentBox>
+      }
 
       <ContentBox>
         <Text Text H5 bold color={COLOR.N1000}>Password</Text>
@@ -175,7 +205,7 @@ function ProfileSettings() {
           style={{ fontSize: '15px', fontWeight: '400' }}
         />
 
-        <Text B1 medium color={COLOR.N700} marginTop={16}>Confirm Password</Text>
+        <Text B1 medium color={COLOR.N700} marginTop={16}>Confirmation</Text>
         <BorderInput
           type='password'
           value={passwordConfirm}
