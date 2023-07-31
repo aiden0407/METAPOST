@@ -14,7 +14,7 @@ import { getCommunityRanking } from 'apis/Community';
 
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
-import defaultProfile from 'assets/icons/icon_default_profile.png';
+import defaultCommunity from 'assets/icons/icon_default_community.png';
 
 function CommunityRanking() {
 
@@ -40,7 +40,7 @@ function CommunityRanking() {
   const handleChangePaginationIndex = async function (index) {
     setPageIndex(index);
     try {
-      const response = await getCommunityRanking(index * 10);
+      const response = await getCommunityRanking(index * 15);
       setRankingData(response.data);
     } catch (error) {
       alert(error);
@@ -48,7 +48,7 @@ function CommunityRanking() {
   };
 
   const handleImageError = (error) => {
-    error.target.src = defaultProfile;
+    error.target.src = defaultCommunity;
   }
 
   function Pagination() {
@@ -88,7 +88,7 @@ function CommunityRanking() {
     <CommunityRankingContainer>
 
       <Row>
-        <Text H5 bold color={COLOR.N1000}>COMMUNITY RANKING</Text>
+        <Text P1 color={COLOR.N1000}>COMMUNITY RANKING</Text>
         <FlexBox />
         <CreateButton onClick={() => navigate('/community/create')}>
           <Text B1 medium color="#FFFFFF">Create</Text>
