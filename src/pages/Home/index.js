@@ -16,7 +16,9 @@ import { getMainPost } from 'apis/Home';
 //Assets
 import fireActiveIcon from 'assets/icons/fire_active.svg';
 import fireInactiveIcon from 'assets/icons/fire_inactive.svg';
+import followActiveIcon from 'assets/icons/follow_active.svg';
 import followInactiveIcon from 'assets/icons/follow_inactive.svg';
+import newActiveIcon from 'assets/icons/new_active.svg';
 import newInactiveIcon from 'assets/icons/new_inactive.svg';
 import arrowNext from 'assets/icons/arrow_next.svg';
 import writeIcon from 'assets/icons/write.svg';
@@ -82,8 +84,9 @@ function Home() {
 
   const handleChangePaginationIndex = async function (index) {
     setPageIndex(index);
+    window.scrollTo({ top: 0 });
     try {
-      const response = await getMainPost(activeButton, index * 10);
+      const response = await getMainPost(activeButton, index * 20);
       setMainData(response.data);
     } catch (error) {
       alert(error);
@@ -92,7 +95,7 @@ function Home() {
 
   function Pagination() {
     const paginationArray = [];
-    const totalPageIndex = Math.floor(maxLength / 10);
+    const totalPageIndex = Math.floor((maxLength - 1) / 20);
 
     for (let ii = 0; ii <= totalPageIndex; ii++) {
       const pageRowIndex = Math.floor(ii / 5);
@@ -111,7 +114,7 @@ function Home() {
         {
           paginationArray?.[Math.floor(pageIndex / 5)]?.map((item) =>
             <PageButton key={item} onClick={() => handleChangePaginationIndex(item)}>
-              <Text B1 medium color={pageIndex === item ? COLOR.BLUE1 : COLOR.N600}>{item+1}</Text>
+              <Text B1 medium color={pageIndex === item ? COLOR.BLUE1 : COLOR.N600}>{item + 1}</Text>
             </PageButton>
           )
         }
@@ -143,19 +146,19 @@ function Home() {
           <MenuButton active={activeButton === 'hot'} onClick={() => handleActiveButtonChange('hot')}>
             <Row>
               <Image src={activeButton === 'hot' ? fireActiveIcon : fireInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'hot' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
+              <Text P2 color={activeButton === 'hot' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
             </Row>
           </MenuButton>
           <MenuButton active={activeButton === 'follow'} onClick={() => handleActiveButtonChange('follow')}>
             <Row>
-              <Image src={followInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'follow' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
+              <Image src={activeButton === 'follow' ? followActiveIcon : followInactiveIcon} width={14} />
+              <Text P2 color={activeButton === 'follow' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
             </Row>
           </MenuButton>
           <MenuButton active={activeButton === 'new'} onClick={() => handleActiveButtonChange('new')}>
             <Row>
-              <Image src={newInactiveIcon} width={14} />
-              <Text B1 bold color={activeButton === 'new' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NEW</Text>
+              <Image src={activeButton === 'new' ? newActiveIcon : newInactiveIcon} width={14} />
+              <Text P2 color={activeButton === 'new' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NEW</Text>
             </Row>
           </MenuButton>
         </Row>
@@ -163,21 +166,26 @@ function Home() {
         {
           mainData && <ContentsWrapper>
             {
-              mainData.map((item) =>
-                <Preview
-                  key={`post_${item.id}`}
-                  postId={item.id}
-                  profileImage={item.nft_thumbnail}
-                  userId={item.nickname}
-                  nftName={item.nft_title}
-                  title={item.title}
-                  image={item?.image}
-                  long={item.liked_count}
-                  short={item.disliked_count}
-                  comment={item.comment_count}
-                  communityName={item.community_title}
-                  createdAt={item.created_at}
-                />)
+              mainData.map((item, index) => {
+                if (index < 20) {
+                  return (
+                    <Preview
+                      key={`post_${item.id}`}
+                      postId={item.id}
+                      profileImage={item.nft_thumbnail}
+                      userId={item.nickname}
+                      nftName={item.nft_title}
+                      title={item.title}
+                      image={item?.image}
+                      long={item.liked_count}
+                      short={item.disliked_count}
+                      comment={item.comment_count}
+                      communityName={item.community_title}
+                      createdAt={item.created_at}
+                    />
+                  )
+                }
+              })
             }
           </ContentsWrapper>
         }
