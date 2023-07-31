@@ -16,8 +16,12 @@ import { getMyCommunityList } from 'apis/Community';
 
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
+import alignLeftIcon from 'assets/icons/align_left.svg';
 import alignLeftColorIcon from 'assets/icons/align_left_color.svg';
 import alignCenterIcon from 'assets/icons/align_center.svg';
+import alignCenterColorIcon from 'assets/icons/align_center_color.svg';
+import alignRightIcon from 'assets/icons/align_right.svg';
+import alignRightColorIcon from 'assets/icons/align_right_color.svg';
 import imageIcon from 'assets/icons/image.svg';
 import youtubeIcon from 'assets/icons/youtube.svg';
 import emojiIcon from 'assets/icons/emoji.svg';
@@ -146,15 +150,18 @@ function Write() {
       </ToggleButton>
 
       <WriteBox>
-        {/* <NoticeRow>
-          <CheckBox
-            checked={isNoticeChecked}
-            onChange={(event) => {
-              setNoticeChecked(event.target.checked);
-            }}
-          />
-          <Text B1 medium color={COLOR.N1000} marginLeft={8}>Notice</Text>
-        </NoticeRow> */}
+        {
+          selectedCommunity?.fields?.owner_id === loginData?.user?.id
+          && <NoticeRow>
+            <CheckBox
+              checked={isNoticeChecked}
+              onChange={(event) => {
+                setNoticeChecked(event.target.checked);
+              }}
+            />
+            <Text B1 medium color={COLOR.N1000} marginLeft={8}>Notice</Text>
+          </NoticeRow>
+        }
 
         <TitleInput
           type="text"
@@ -167,10 +174,13 @@ function Write() {
 
         <Row gap={8}>
           <OptionButton on={alignOption === 'left'} onClick={() => setAlignOption('left')}>
-            <Image src={alignLeftColorIcon} width={20} />
+            <Image src={alignOption === 'left' ? alignLeftColorIcon : alignLeftIcon} width={20} />
           </OptionButton>
           <OptionButton on={alignOption === 'center'} onClick={() => setAlignOption('center')}>
-            <Image src={alignCenterIcon} width={20} />
+            <Image src={alignOption === 'center' ? alignCenterColorIcon : alignCenterIcon} width={20} />
+          </OptionButton>
+          <OptionButton on={alignOption === 'right'} onClick={() => setAlignOption('right')}>
+            <Image src={alignOption === 'right' ? alignRightColorIcon : alignRightIcon} width={20} />
           </OptionButton>
           <OptionButton onClick={() => fileInputRef.current.click()}>
             <input
