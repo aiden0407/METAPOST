@@ -108,8 +108,7 @@ function CommunitySettings() {
 
     try {
       await editCommunity(loginData.token.access, communityId, communityData.community.title, description, logo, banner);
-      alert('Community has been created');
-      navigate('/profile');
+      navigate(`/community?community_id=${communityId}`);
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
