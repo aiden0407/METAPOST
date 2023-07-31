@@ -12,18 +12,27 @@ const AuthContext = createContext({});
 //create reducer
 const reducer = (state, action) => {
   switch (action.type) {
-    
+
     case 'LOGIN':
       return {
         ...state,
         loginData: action.loginData,
       };
 
-      case 'LOGOUT':
-        return {
-          ...state,
-          loginData: undefined,
-        };
+    case 'LOGOUT':
+      return {
+        ...state,
+        loginData: undefined,
+      };
+
+    case 'PROFILE_UPDATE':
+      return {
+        ...state,
+        loginData: {
+          ...state.loginData,
+          user: action.profileData,
+        },
+      };
 
     default:
       return state;
