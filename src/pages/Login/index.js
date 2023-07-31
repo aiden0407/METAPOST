@@ -1,7 +1,7 @@
 //React
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from 'context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Web3
@@ -18,7 +18,7 @@ import { BorderInput } from 'components/TextInput';
 import { Row, FlexBox, DividingLine } from 'components/Flex';
 
 //Api
-import { loginByEmail } from 'apis/Login';
+import { loginByEmail, loginByWallet } from 'apis/Login';
 
 //Assets
 import etheriumIcon from 'assets/icons/icno_etherium.png';
@@ -29,14 +29,12 @@ import walletConnectIcon from 'assets/icons/icon_walletconnect.png';
 function Login() {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { dispatch } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
-  const [account, setAccount] = useState();
-  
-  console.log(account);
 
   useEffect(() => {
     for (const key in localStorage) {
@@ -47,13 +45,13 @@ function Login() {
         localStorage.removeItem(key);
       }
     }
-  }, []);
+  }, [location]);
 
   function handleWalletClick() {
     setIsWalletClicked(true);
   }
 
-  const { open, close } = useWeb3Modal();
+  const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount()
   function handleWalletConnect() {
     if(!isConnected){
@@ -62,7 +60,7 @@ function Login() {
   }
   useEffect(() => {
     if(isConnected) {
-      setAccount(address);
+      handleSignInByWallet(address);
     }
   }, [isConnected]);
 
@@ -75,7 +73,7 @@ function Login() {
       const provider = await web3Modal.connect();
       const library = new ethers.providers.Web3Provider(provider);
       const accounts = await library.listAccounts();
-      if (accounts) setAccount(accounts[0]);
+      if (accounts) handleSignInByWallet(accounts[0]);
     } catch (error) {
       if (error === 'Modal closed by user') {
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -116,6 +114,24 @@ function Login() {
 
     } catch (error) {
       alert(error.실패);
+    }
+  }
+
+  const handleSignInByWallet = async function (address) {
+    try {
+      const response = await loginByWallet(address);
+      dispatch({
+        type: 'LOGIN',
+        loginData: response.data
+      });
+      if (isRememberChecked) {
+        localStorage.setItem('loginData', JSON.stringify(response.data));
+      } else {
+        sessionStorage.setItem('loginData', JSON.stringify(response.data));
+      }
+      navigate('/');
+    } catch (error) {
+      navigate(`/signup/wallet?wallet_address=${address}`);
     }
   }
 
