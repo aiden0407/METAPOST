@@ -44,11 +44,19 @@ function Login() {
       if (key.includes("wc@2:")) {
         localStorage.removeItem(key);
       }
+      if (key.includes("wagmi.")) {
+        localStorage.removeItem(key);
+      }
     }
   }, [location]);
 
   function handleWalletClick() {
-    setIsWalletClicked(true);
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      handleWalletConnect();
+    } else {
+      setIsWalletClicked(true);
+    }
   }
 
   const { open } = useWeb3Modal();
@@ -76,12 +84,7 @@ function Login() {
       if (accounts) handleSignInByWallet(accounts[0]);
     } catch (error) {
       if (error === 'Modal closed by user') {
-        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (isMobileDevice) {
-          alert('We were unable to use the wallet in this device');
-        } else {
-          alert('To use this wallet, extension must be installed');
-        }
+        alert('To use this wallet, extension must be installed');
       }
       console.log(error);
     }
