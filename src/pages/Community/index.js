@@ -210,7 +210,7 @@ function Community() {
 
         <RatioParent>
           <RatioChild>
-            <Image src={communityData.community.banner_url} borderRadius="4px" style={{ width: '100%', height: '100%', zIndex: 1 }} onError={handleBannerImageError} />
+            <Image src={communityData.community.banner_url ?? defaultImage} borderRadius="4px" style={{ width: '100%', height: '100%', zIndex: 1 }} onError={handleBannerImageError} />
           </RatioChild>
         </RatioParent>
 
