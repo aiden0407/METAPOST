@@ -23,7 +23,7 @@ function CommunityCreate() {
   const navigate = useNavigate();
   const { state: { loginData } } = useContext(AuthContext);
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState();
   const [logo, setLogo] = useState();
   const [banner, setBanner] = useState();
   const logoInputRef = useRef(null);
@@ -64,8 +64,8 @@ function CommunityCreate() {
       alert('Name field is empty');
       return;
     }
-    if (!description.length) {
-      alert('Description field is empty');
+    if (!logo) {
+      alert('The logo image needs to be uploaded');
       return;
     }
 
@@ -131,7 +131,13 @@ function CommunityCreate() {
           <Text H5 bold>Community banner</Text>
           <Text B0 color={COLOR.N700} marginTop={8}>Images recommends a 2:1 ratio.</Text>
           <BannerRatioParent>
-            <RatioChild onClick={() => bannerInputRef.current.click()}>
+            <RatioChild onClick={() => {
+              if (banner) {
+                setBanner();
+                return;
+              }
+              bannerInputRef.current.click()
+            }}>
               <input
                 type="file"
                 ref={bannerInputRef}
@@ -155,7 +161,7 @@ function CommunityCreate() {
             onChange={(e) => setDescription(e.target.value)}
             maxlength="300"
           />
-          <LengthText B2 color={COLOR.N600}>{description.length}/300</LengthText>
+          <LengthText B2 color={COLOR.N600}>{description?.length ?? 0}/300</LengthText>
         </ContentBox>
       </Column>
 
