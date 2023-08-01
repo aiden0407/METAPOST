@@ -54,7 +54,6 @@ function Header() {
       } else {
         switch (location.pathname) {
           case '/write':
-          case '/profile':
           case '/profile/settings':
           case '/community':
           case '/community/create':
@@ -104,6 +103,17 @@ function Header() {
   function handleLogOut() {
     localStorage.removeItem('loginData');
     sessionStorage.removeItem('loginData');
+    for (const key in localStorage) {
+      if (key.includes("-walletlink:https://www.walletlink.org:")) {
+        localStorage.removeItem(key);
+      }
+      if (key.includes("wc@2:")) {
+        localStorage.removeItem(key);
+      }
+      if (key.includes("wagmi.")) {
+        localStorage.removeItem(key);
+      }
+    }
     dispatch({ type: 'LOGOUT' });
     setIsToggleOpened(false);
     navigate('/login');
