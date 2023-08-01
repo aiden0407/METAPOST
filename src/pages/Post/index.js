@@ -17,12 +17,14 @@ import { getPostDetail, likedPost, postComment, uploadImage } from 'apis/Home';
 
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
+import nftNoneIcon from 'assets/icons/icon_nft_none.png';
 import reportIcon from 'assets/icons/report.svg';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment_black.svg';
 import imageIcon from 'assets/icons/image.svg';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
+import defaultCommunity from 'assets/icons/icon_default_community.png';
 
 function Post() {
 
@@ -34,7 +36,7 @@ function Post() {
   const { state: { loginData } } = useContext(AuthContext);
   const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState();
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState();
   const [mediaUrl, setMediaUrl] = useState();
   const fileInputRef = useRef(null);
 
@@ -45,7 +47,39 @@ function Post() {
   const initPostDetail = async function () {
     try {
       const response = await getPostDetail(postId);
-      response.data.comments.reverse();
+      const comments = response.data.comments;
+      let depth0Comments = [];
+      let depth1Comments = [];
+      let depth2Comments = [];
+      for (const comment of comments) {
+        if (comment.depth === 0) {
+          depth0Comments.push(comment);
+        }
+        if (comment.depth === 1) {
+          depth1Comments.push(comment);
+        }
+        if (comment.depth === 2) {
+          depth2Comments.push(comment);
+        }
+      }
+      depth0Comments = depth0Comments.reverse();
+
+      for (const depth0 of depth0Comments) {
+        for (const depth1 of depth1Comments) {
+          if (depth1.parent_id === depth0.id) {
+            depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth1);
+          }
+        }
+      }
+      for (const depth0 of depth0Comments) {
+        for (const depth2 of depth2Comments) {
+          if (depth2.parent_id === depth0.id) {
+            depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth2);
+          }
+        }
+      }
+
+      response.data.comments = depth0Comments;
       setPostDetail(response.data);
     } catch (error) {
       alert(error);
@@ -99,9 +133,15 @@ function Post() {
 };
 
   const handlePostComment = async function () {
-    if(loginData){
+    if (loginData) {
+      if (!comment) {
+        alert('Comment field is empty');
+        return;
+      }
+
       try {
-        await postComment(loginData.token.access, postId, null, comment, mediaUrl);
+        await postComment(loginData.token.access, postId, undefined, comment, mediaUrl);
+        setMediaUrl();
         const response = await getPostDetail(postId);
         response.data.comments.reverse();
         setPostDetail(response.data);
@@ -139,6 +179,10 @@ function Post() {
     });
   }
 
+  const handleProfileImageError = (error) => {
+    error.target.src = defaultCommunity;
+  }
+
   if (!postDetail) {
     return null;
   }
@@ -146,8 +190,12 @@ function Post() {
   return (
     <PostContainer>
       <CommunityBox>
-        <Image src={postDetail.detail[0]?.community_image} width={16} borderRadius="2px" />
-        <Text B3 medium color={COLOR.N700} marginLeft={8}>{postDetail.detail[0].community_title}</Text>
+        {
+          postDetail.detail[0].community_title && <>
+            <Image src={postDetail.detail[0]?.community_logo_url ?? defaultCommunity} width={16} borderRadius="2px" onError={handleProfileImageError} />
+            <Text B3 medium color={COLOR.N700} marginLeft={8}>{postDetail.detail[0].community_title}</Text>
+          </>
+        }
       </CommunityBox>
 
       <TitleBox>
@@ -167,8 +215,12 @@ function Post() {
           <Column marginLeft={8} gap={4}>
             <Text B2 medium color={COLOR.N700}>{postDetail.detail[0].nickname}</Text>
             <Row>
-              <Image src={nftIcon} width={16} />
-              <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.detail[0].nft_title}</Text>
+              <Image src={postDetail.detail[0].nft_title ? nftIcon : nftNoneIcon} width={16} />
+              {
+                postDetail.detail[0].nft_title
+                  ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.detail[0].nft_title}</Text>
+                  : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+              }
             </Row>
           </Column>
         </Row>
@@ -200,6 +252,9 @@ function Post() {
         </Row>
 
         <CommentWriteBox>
+          {
+            mediaUrl && <Image src={mediaUrl} style={{width: '100%'}} />
+          }
           <CommentInput
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -209,7 +264,11 @@ function Post() {
             <PostImageButton
               onClick={() => {
                 if (loginData) {
-                  fileInputRef.current.click()
+                  if(mediaUrl){
+                    setMediaUrl();
+                  }else{
+                    fileInputRef.current.click()
+                  }
                 } else {
                   alert('You need to login');
                   navigate('/login');
