@@ -20,6 +20,7 @@ import arrowNextIcon from 'assets/icons/arrow_next.svg';
 import verifiedIcon from 'assets/icons/verified.svg';
 import nftIcon from 'assets/icons/icon_nft.png';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
+import defaultCommunity from 'assets/icons/icon_default_community.png';
 
 function Profile() {
 
@@ -72,8 +73,8 @@ function Profile() {
     }
   };
 
-  const handleImageError = (error) => {
-    error.target.src = defaultProfile;
+  const handleCommunityImageError = (error) => {
+    error.target.src = defaultCommunity;
   }
 
   if (!userData) {
@@ -87,7 +88,7 @@ function Profile() {
         <Text B1 medium color={COLOR.N700} marginTop={12}>{userData.nickname}</Text>
         <Row marginTop={9}>
           <Image src={nftIcon} width={16} />
-          <Text B1 medium color={userData.nft_name ? COLOR.N800 : COLOR.N600} marginLeft={4}>{userData.nft_name ?? 'The NFT has not been registered yet'}</Text>
+          <Text B1 medium color={userData.nft_name ? COLOR.N800 : COLOR.N600} marginLeft={4}>{userData.nft_name ?? 'NFT has not been registered yet'}</Text>
         </Row>
         {
           !profileId && <SettingImage src={settingIcon} width={20} onClick={() => {
@@ -129,7 +130,7 @@ function Profile() {
                         navigate(`/community?community_id=${item.id}`);
                         window.scrollTo({ top: 0 });
                       }}>
-                        <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
+                        <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleCommunityImageError} />
                         <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                         {
                           item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
@@ -143,7 +144,7 @@ function Profile() {
                           navigate(`/community?community_id=${item.id}`);
                           window.scrollTo({ top: 0 });
                         }}>
-                          <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
+                          <StyledImage src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleCommunityImageError} />
                           <StyledText B2 color={COLOR.N800} marginLeft={8}>{item.title}</StyledText>
                           {
                             item.isOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
