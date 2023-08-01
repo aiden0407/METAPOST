@@ -176,7 +176,7 @@ function Home() {
                       userId={item.nickname}
                       nftName={item.nft_title}
                       title={item.title}
-                      image={item?.image}
+                      image={item?.media_url}
                       long={item.liked_count}
                       short={item.disliked_count}
                       comment={item.comment_count}
