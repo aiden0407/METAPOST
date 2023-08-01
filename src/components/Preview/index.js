@@ -10,6 +10,7 @@ import { Row, Column, FlexBox } from 'components/Flex';
 
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
+import nftNoneIcon from 'assets/icons/icon_nft_none.png';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment.svg';
@@ -55,8 +56,12 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
                         <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
                     </Row>
                     <Row>
-                        <Image src={nftIcon} width={16} />
-                        <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
+                        <Image src={nftName ? nftIcon : nftNoneIcon} width={16} />
+                        {
+                            nftName
+                                ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
+                                : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+                        }
                     </Row>
                 </Column>
             </Row>
