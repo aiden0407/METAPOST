@@ -144,7 +144,7 @@ function CommunityRanking() {
                 <Text B2 medium color={COLOR.N800} marginLeft={10}>{item.title}</Text>
                 <FlexBox />
                 <MemberNumberWrapper>
-                  <Text B2 color={COLOR.N700}>{item.participant_count.toLocaleString()}</Text>
+                  <Text B2 color={COLOR.N700}>{(item.participant_count+1).toLocaleString()}</Text>
                 </MemberNumberWrapper>
               </RankingBody>
             )
