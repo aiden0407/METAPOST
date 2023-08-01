@@ -52,9 +52,9 @@ function CommunitySettings() {
       }
 
       setCommunityData(response.data);
-      setDescription(response.data.community.description);
+      setDescription(response.data.community.description ?? '');
       setLogo(response.data.community.logo_url);
-      setBanner(response.data.community.banner_url);
+      setBanner(response.data.community.banner_url ?? undefined);
 
       try {
         const response = await getCommunityDetail(loginData.token.access, communityId);
@@ -101,13 +101,8 @@ function CommunitySettings() {
   };
 
   const handleEdit = async function () {
-    if (!description.length) {
-      alert('Description field is empty');
-      return;
-    }
-
     try {
-      await editCommunity(loginData.token.access, communityId, communityData.community.title, description, logo, banner);
+      await editCommunity(loginData.token.access, communityId, undefined, description, logo, banner);
       navigate(`/community?community_id=${communityId}`);
       window.scrollTo({
         top: 0,
@@ -197,7 +192,7 @@ function CommunitySettings() {
             onChange={(e) => setDescription(e.target.value)}
             maxlength="300"
           />
-          <LengthText B2 color={COLOR.N600}>{description.length}/300</LengthText>
+          <LengthText B2 color={COLOR.N600}>{description?.length ?? 0}/300</LengthText>
         </ContentBox>
 
         <ContentBox>
