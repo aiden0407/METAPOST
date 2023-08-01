@@ -16,6 +16,7 @@ import { likedComment, postComment, uploadImage } from 'apis/Home';
 
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
+import nftNoneIcon from 'assets/icons/icon_nft_none.png';
 import likeIcon from 'assets/icons/like.svg';
 //import likeColorIcon from 'assets/icons/like_color.svg';
 import dislikeIcon from 'assets/icons/dislike.svg';
@@ -31,7 +32,7 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
     const { state: { loginData } } = useContext(AuthContext);
     const { dispatch } = useContext(AppContext);
     const [isCommentOpend, setIsCommentOpend] = useState(false);
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState();
     const [mediaUrl, setMediaUrl] = useState();
     const fileInputRef = useRef(null);
 
@@ -94,8 +95,13 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
       };
 
       const handlePostComment = async function () {
+        if(!comment) {
+            alert('Comment field is empty');
+            return;
+        }
+
         try {
-            await postComment(loginData.token.access, null, commentId, comment, mediaUrl);
+            await postComment(loginData.token.access, postId, commentId, comment, mediaUrl);
             window.location.reload();
         } catch (error) {
             alert(error);
@@ -108,21 +114,26 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
                 <Image src={profileImage ?? defaultProfile} width={33} borderRadius="4px" />
                 <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
                     <Row style={{ width: "100%" }}>
-                        <Text B2 medium color={COLOR.N600}>{userId}</Text>
+                        <Text B2 medium color={COLOR.N700}>{userId}</Text>
                         <FlexBox />
                         <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
                     </Row>
                     <Row>
-                        <Image src={nftIcon} width={16} />
-                        <Text B3 medium color={COLOR.N600} marginLeft={4}>{nftName}</Text>
+                        <Image src={nftName ? nftIcon : nftNoneIcon} width={16} />
+                        {
+                            nftName
+                                ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
+                                : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+                        }
                     </Row>
+
                 </Column>
             </Row>
 
+            {
+                image && <Image src={image} style={{ width: "100%" }} marginTop={6} />
+            }
             <Text B1 color={COLOR.N800} marginTop={8}>{text}</Text>
-            {/* {
-                image && <Image src={image} style={{ width: "100%" }} borderRadius="4px" marginTop={10} />
-            } */}
 
             <Row marginTop={8} gap={8}>
                 <StyledRow gap={4} onClick={()=>handleLikedComment(true)}>
@@ -152,12 +163,21 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
 
             {
                 isCommentOpend && <>
+                    {
+                        mediaUrl && <Image src={mediaUrl} style={{ width: '100%' }} marginTop={10} />
+                    }
                     <CommentInput
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                     />
                     <Row marginTop={8}>
-                        <PostImageButton onClick={() => fileInputRef.current.click()}>
+                        <PostImageButton onClick={() => {
+                            if (mediaUrl) {
+                                setMediaUrl();
+                            } else {
+                                fileInputRef.current.click()
+                            }
+                        }}>
                             <input
                                 type="file"
                                 ref={fileInputRef}
