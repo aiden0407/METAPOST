@@ -144,7 +144,7 @@ export const editCommunity = async function (accessToken, communityId, name, des
   try {
     let options = {
       url: `${process.env.REACT_APP_API_HOST}/community/update`,
-      method: 'POST',
+      method: 'PUT',
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
