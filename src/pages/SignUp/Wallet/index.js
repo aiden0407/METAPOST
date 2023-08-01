@@ -1,5 +1,5 @@
 //React
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from 'context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -45,7 +45,7 @@ function SignUpWallet() {
   const initSignUpWallet = async function () {
     try {
       const response = await nftCheckByWallet(walletAdress);
-      setNftData(response);
+      setNftData(response.data);
     } catch (error) {
       alert(error);
     }
@@ -78,18 +78,20 @@ function SignUpWallet() {
 
     try {
       const nicknameAlreadyUsed = await checkUserNameAvailability();
-  
       if (!nicknameAlreadyUsed) {
-        const response = await registerByWallet(walletAdress, userName, profile);
 
-        dispatch({
-          type: 'LOGIN',
-          loginData: response.data
-        });
-        sessionStorage.setItem('loginData', JSON.stringify(response.data));
-        
-        navigate('/', { replace: true });
-        window.scrollTo({ top: 0 });
+        try {
+          const response = await registerByWallet(walletAdress, userName, profile.id);
+          dispatch({
+            type: 'LOGIN',
+            loginData: response.data
+          });
+          sessionStorage.setItem('loginData', JSON.stringify(response.data));
+          navigate('/', { replace: true });
+          window.scrollTo({ top: 0 });
+        } catch (error) {
+          alert(error);
+        }
 
       } else {
         alert('The user name is already in use');
@@ -113,8 +115,14 @@ function SignUpWallet() {
       <Text H3 bold>Complete Sign up</Text>
 
       <CenterWrapper>
-        <Image src={profile ?? defaultProfile} width={80} borderRadius="6px" />
+        <Image src={profile?.thumbnail ?? defaultProfile} width={80} borderRadius="6px" />
         <Text B1 medium color={COLOR.N700} marginTop={userName ? 12 : 26}>{userName}</Text>
+        {
+          profile && <Row marginTop={8}>
+            <Image src={nftIcon} width={16} />
+            <Text B1 medium color={COLOR.N800} marginLeft={4}>{profile?.title}</Text>
+          </Row>
+        }
       </CenterWrapper>
 
       <Text B1 medium color={COLOR.N700} marginTop={40}>Wallet</Text>
@@ -140,10 +148,26 @@ function SignUpWallet() {
         <Text B1 medium color={COLOR.N700}>Profile Image</Text>
         <Image src={nftIcon} width={20} marginLeft={6} />
       </Row>
-      <ProfileImageSelectBox>
+      {
+        nftData?.length
+          ? <ProfileImageSelectBox>
+            {
+              nftData.map((item) =>
+                <ProfileImage 
+                  key={`nft_${item.id}`}
+                  src={item.thumbnail}
+                  selected={item.id === profile?.id}
+                  onClick={()=>setProfile(item)}
+                />
+              )
+            }
+        </ProfileImageSelectBox>
+        :<ProfileImageBlankBox>
         <Image src={profileIcon} width={24} />
         <Text B1 center color={COLOR.N700} marginTop={8}>You don’t have any NFTs in your wallet.</Text>
-      </ProfileImageSelectBox>
+      </ProfileImageBlankBox>
+      }
+      
 
       <CenterWrapper>
         <Row marginTop={8}>
@@ -218,6 +242,26 @@ const WalletAdressBox = styled.div`
 `;
 
 const ProfileImageSelectBox = styled.div`
+  margin-top: 8px;
+  width: 100%;
+  height: 176px;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: ${COLOR.N400};
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`
+
+const ProfileImage = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  border: ${(props) => props.selected ? `3px solid ${COLOR.BLUE1}` : `3px solid  transparent`};
+  cursor: pointer;
+`
+
+const ProfileImageBlankBox = styled.div`
   margin-top: 8px;
   width: 100%;
   height: 176px;
