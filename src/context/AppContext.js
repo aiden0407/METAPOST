@@ -3,12 +3,13 @@ import { createContext, useReducer } from "react";
 
 //initial state
 const initialState = {
+  isProfileToggleOpened: false,
+  isSearchPopupOpened: false,
   isReportPopupOpened: false,
   reportData: {
     subject: undefined,
     id: undefined
   },
-  isSearchPopupOpened: false,
 };
 
 //create context
@@ -17,6 +18,30 @@ const AppContext = createContext({});
 //create reducer
 const reducer = (state, action) => {
   switch (action.type) {
+
+    case 'OPEN_PROFILE_TOGGLE':
+      return {
+        ...state,
+        isProfileToggleOpened: true,
+      };
+
+    case 'CLOSE_PROFILE_TOGGLE':
+      return {
+        ...state,
+        isProfileToggleOpened: false,
+      };
+
+    case 'OPEN_SEARCH_POPUP':
+      return {
+        ...state,
+        isSearchPopupOpened: true,
+      };
+
+    case 'CLOSE_SEARCH_POPUP':
+      return {
+        ...state,
+        isSearchPopupOpened: false,
+      };
 
     case 'OPEN_REPORT_POPUP':
       return {
@@ -36,18 +61,6 @@ const reducer = (state, action) => {
           subject: undefined,
           id: undefined
         }
-      };
-
-    case 'OPEN_SEARCH_POPUP':
-      return {
-        ...state,
-        isSearchPopupOpened: true,
-      };
-
-    case 'CLOSE_SEARCH_POPUP':
-      return {
-        ...state,
-        isSearchPopupOpened: false,
       };
 
     default:
