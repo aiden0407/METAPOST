@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { COLOR } from 'constants/design';
 import { Text } from 'components/Text';
 import { Image } from 'components/Image';
-import { Row, Column, FlexBox } from 'components/Flex';
+import { Row, Column, FlexBox, DividingLine } from 'components/Flex';
 import Comment from 'components/Comment';
 
 //Api
@@ -18,6 +18,8 @@ import { getPostDetail, likedPost, postComment, uploadImage } from 'apis/Home';
 //Assets
 import nftIcon from 'assets/icons/icon_nft.png';
 import nftNoneIcon from 'assets/icons/icon_nft_none.png';
+import moreIcon from 'assets/icons/more.svg';
+import editIcon from 'assets/icons/edit.svg';
 import reportIcon from 'assets/icons/report.svg';
 import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
@@ -36,6 +38,7 @@ function Post() {
   const { state: { loginData } } = useContext(AuthContext);
   const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState();
+  const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [comment, setComment] = useState();
   const [mediaUrl, setMediaUrl] = useState();
   const fileInputRef = useRef(null);
@@ -97,6 +100,19 @@ function Post() {
     });
     const dateArray = formattedDate.split(", ");
     return dateArray[0] + ', ' + dateArray[1] + ' ' + dateArray[2];
+  }
+
+  function handleEditPost() {
+    navigate(`/write?post_id=${postId}`);
+    window.scrollTo({ top: 0 });
+  }
+
+  function handleReport() {
+    dispatch({
+      type: 'OPEN_REPORT_POPUP',
+      subject: 'post',
+      id: postId
+    });
   }
 
   function formatNumber(number) {
@@ -171,14 +187,6 @@ function Post() {
     }
   };
 
-  function handleReport() {
-    dispatch({
-      type: 'OPEN_REPORT_POPUP',
-      subject: 'post',
-      id: postId
-    });
-  }
-
   const handleProfileImageError = (error) => {
     error.target.src = defaultCommunity;
   }
@@ -188,7 +196,11 @@ function Post() {
   }
 
   return (
-    <PostContainer>
+    <PostContainer onClick={()=>{
+      if(isToggleOpened){
+        setIsToggleOpened(false)
+      }
+    }}>
       <CommunityBox>
         {
           postDetail.detail[0].community_title && <>
@@ -203,11 +215,28 @@ function Post() {
       </TitleBox>
 
       <ContentBox>
-        <Row style={{ width: "100%" }}>
+        <Row style={{ width: '100%', position: 'relative' }}>
           <Text B3 color={COLOR.N600}>{formatDateTime(postDetail.detail[0].created_at)}</Text>
           <FlexBox />
-          <Text B2 color={COLOR.N600}>{formatNumber(postDetail.detail[0]?.view ?? 0)}&nbsp;views</Text>
-          <StyledImage src={reportIcon} width={16} marginLeft={8} onClick={()=>handleReport()} />
+          <Text B2 color={COLOR.N600}>{formatNumber(postDetail.detail[0].view ?? 0)}&nbsp;views</Text>
+          <StyledImage src={moreIcon} width={16} marginLeft={8} onClick={() => setIsToggleOpened(true)} />
+          {
+            isToggleOpened && <ToggleBox>
+              {
+                postDetail.detail[0].nickname === loginData.user.nickname && (<>
+                  <StyledRow marginLeft={8} onClick={()=>handleEditPost()}>
+                    <Image src={editIcon} width={14} />
+                    <Text B3 color={COLOR.N700} marginLeft={8}>Edit</Text>
+                  </StyledRow>
+                  <DividingLine color={COLOR.N400} />
+                </>)
+              }
+              <StyledRow marginLeft={8} onClick={()=>handleReport()}>
+                <Image src={reportIcon} width={14} />
+                <Text B3 color={COLOR.N700} marginLeft={8}>Report</Text>
+              </StyledRow>
+            </ToggleBox>
+          }
         </Row>
 
         <Row marginTop={18} style={{ width: "100%" }}>
@@ -225,9 +254,7 @@ function Post() {
           </Column>
         </Row>
 
-        {
-          postDetail.detail[0]?.image && <Image src={postDetail.detail[0].image} style={{ width: "100%" }} borderRadius="6px" marginTop={16} />
-        }
+        {/* description이 html코드 일 때 아래 부분 변경 */}
         <Text B0 color={COLOR.N800} marginTop={16}>{postDetail.detail[0]?.description}</Text>
 
         <Row marginTop={48} gap={8} style={{ width: "100%", justifyContent: "center" }}>
@@ -353,6 +380,20 @@ const ContentBox = styled.div`
   flex-direction: column;
 `
 
+const ToggleBox = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 96px;
+  padding: 7px 0;
+  background-color: #FFFFFF;
+  border: 1px solid ${COLOR.N400};
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+`
+
 const LongShortButton = styled.div`
   padding: 8px 12px;
   background-color: ${COLOR.N200};
@@ -423,5 +464,9 @@ const CommentWrittenBox = styled.div`
 `
 
 const StyledImage = styled(Image)`
+  cursor: pointer;
+`
+
+const StyledRow = styled(Row)`
   cursor: pointer;
 `
