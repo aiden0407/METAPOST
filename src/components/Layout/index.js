@@ -14,7 +14,7 @@ import Search from 'components/Popup/Search';
 function Layout({ children }) {
 
   const location = useLocation();
-  const { state: { isReportPopupOpened, isSearchPopupOpened } } = useContext(AppContext);
+  const { state: { isReportPopupOpened, isSearchPopupOpened }, dispatch } = useContext(AppContext);
 
   const handleChangeColor = (value) => {
     switch (value) {
@@ -51,7 +51,7 @@ function Layout({ children }) {
           <Header />
         </HeaderContainer>
 
-        <BodyWrapper>
+        <BodyWrapper onClick={()=>dispatch({type: 'CLOSE_PROFILE_TOGGLE'})}>
           {children}
         </BodyWrapper>
 
