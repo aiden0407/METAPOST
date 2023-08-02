@@ -61,7 +61,7 @@ export const uploadImage = async function (accessToken, model, file) {
   }
 }
 
-export const writePost = async function (accessToken, communityId, type, title, description, mediaUrl) {
+export const writePost = async function (accessToken, communityId, type, title, description) {
   try {
     let options = {
       url: `${process.env.REACT_APP_API_HOST}/post/create`,
@@ -74,7 +74,29 @@ export const writePost = async function (accessToken, communityId, type, title, 
         type: type,
         title: title,
         description: description,
-        media_url: mediaUrl,
+      }
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
+export const editPost = async function (accessToken, postId, type, title, description) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/post/update`,
+      method: 'PUT',
+      headers: {
+          Authorization: `Bearer ${accessToken}`
+      },
+      data: {
+        post_id: postId,
+        type: type,
+        title: title,
+        description: description,
       }
     }
     const response = await axios(options);
