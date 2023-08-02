@@ -20,8 +20,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state: { loginData }, dispatch } = useContext(AuthContext);
-  const { dispatch: appDispatch } = useContext(AppContext);
-  const [isToggleOpened, setIsToggleOpened] = useState(false);
+  const { state: { isProfileToggleOpened }, dispatch: appDispatch } = useContext(AppContext);
 
   useEffect(() => {
     if(loginData){
@@ -84,18 +83,14 @@ function Header() {
     navigate('/login');
   }
 
-  function handleTogglOpen() {
-    setIsToggleOpened(!isToggleOpened);
-  }
-
   function handleMyProfile() {
-    setIsToggleOpened(false);
-    navigate('/profile')
+    appDispatch({type: 'CLOSE_PROFILE_TOGGLE'});
+    navigate('/profile');
     window.scrollTo({ top: 0 });
   }
 
   function handleCommunity() {
-    setIsToggleOpened(false);
+    appDispatch({type: 'CLOSE_PROFILE_TOGGLE'});
     navigate('/community/ranking')
     window.scrollTo({ top: 0 });
   }
@@ -115,7 +110,7 @@ function Header() {
       }
     }
     dispatch({ type: 'LOGOUT' });
-    setIsToggleOpened(false);
+    appDispatch({type: 'CLOSE_PROFILE_TOGGLE'});
     navigate('/login');
   }
 
@@ -126,13 +121,13 @@ function Header() {
       <SearchIcon src={searchIcon} onClick={() => handleNavigateSearch()} />
       {
         loginData
-          ? <ProfileIcon src={loginData.user.nft_thumbnail ?? defaultProfile} onClick={() => handleTogglOpen()} />
+          ? <ProfileIcon src={loginData.user.nft_thumbnail ?? defaultProfile} onClick={() => appDispatch({type: 'OPEN_PROFILE_TOGGLE'})} />
           : <SignUpButton onClick={() => handleNavigateJoin()}>
             <Text B1 medium color="#FFFFFF">Join</Text>
           </SignUpButton>
       }
       {
-        isToggleOpened &&
+        isProfileToggleOpened &&
         <ToggleMenu>
           <StyledText B1 medium color={COLOR.N700} onClick={() => handleMyProfile()}>My Profile</StyledText>
           <StyledText B1 medium color={COLOR.N700} onClick={() => handleCommunity()}>Community Ranking</StyledText>
