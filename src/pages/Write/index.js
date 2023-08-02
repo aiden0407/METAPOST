@@ -1,7 +1,7 @@
 //React
 import { useEffect, useState, useContext, useRef } from 'react';
 import { AuthContext } from 'context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 //Components
@@ -11,7 +11,7 @@ import { Image } from 'components/Image';
 import { Row, FlexBox, Box } from 'components/Flex';
 
 //Api
-import { writePost, uploadImage } from 'apis/Home';
+import { getPostDetail, uploadImage, writePost, editPost } from 'apis/Home';
 import { getMyCommunityList } from 'apis/Community';
 
 //Assets
@@ -30,6 +30,10 @@ import defaultProfile from 'assets/icons/icon_default_profile.png';
 function Write() {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const postId = searchParams.get('post_id');
+
   const { state: { loginData } } = useContext(AuthContext);
   const [communityData, setCommunityData] = useState();
   const [isToggleOpened, setIsToggleOpened] = useState(false);
@@ -54,6 +58,27 @@ function Write() {
       if (response.data.length) {
         setSelectedCommunity(response.data[0]);
       }
+
+      if(postId){
+        initEdit(response.data);
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const initEdit = async function (communityList) {
+    try {
+      const response = await getPostDetail(postId);
+      setSelectedCommunity();
+      for (const community of communityList) {
+        if(community.fields.title === response.data.detail[0].community_title){
+          setSelectedCommunity(community);
+          break ;
+        }
+      }
+      setTitle(response.data.detail[0].title);
+      setDescription(response.data.detail[0].description);
     } catch (error) {
       alert(error);
     }
@@ -86,12 +111,22 @@ function Write() {
       return;
     }
 
-    try {
-      await writePost(loginData.token.access, selectedCommunity?.pk, (isNoticeChecked ? 'notice' : 'normal'), title, description, mediaUrl);
-      navigate('/');
-      window.scrollTo({ top: 0 });
-    } catch (error) {
-      alert(error);
+    if (postId) {
+      try {
+        await editPost(loginData.token.access, postId, (isNoticeChecked ? 'notice' : 'normal'), title, description);
+        navigate(`/post?post_id=${postId}`);
+        window.scrollTo({ top: 0 });
+      } catch (error) {
+        alert(error);
+      }
+    } else {
+      try {
+        await writePost(loginData.token.access, selectedCommunity?.pk, (isNoticeChecked ? 'notice' : 'normal'), title, description);
+        navigate('/');
+        window.scrollTo({ top: 0 });
+      } catch (error) {
+        alert(error);
+      }
     }
   };
 
@@ -101,11 +136,14 @@ function Write() {
 
   return (
     <WriteContainer>
-      <ToggleButton onClick={() => {
-        if (communityData?.length) {
-          setIsToggleOpened(!isToggleOpened)
-        }
-      }}>
+      <ToggleButton
+        onClick={() => {
+          if (communityData?.length && !postId) {
+            setIsToggleOpened(!isToggleOpened)
+          }
+        }}
+        style={postId ? {cursor: 'default'} : {}}
+      >
         {
           selectedCommunity
             ? <Image src={selectedCommunity.fields?.logo_url} width={24} onError={handleImageError} />
@@ -118,7 +156,7 @@ function Write() {
         }
         <FlexBox />
         {
-          communityData?.length
+          communityData?.length && !postId
             ? <Image src={arrowNextIcon} width={24} style={{ transform: "rotate(90deg)" }} />
             : null
         }
