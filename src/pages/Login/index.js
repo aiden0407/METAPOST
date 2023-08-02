@@ -187,7 +187,7 @@ function Login() {
         </SignInButton>
       </Row>
 
-      <DividingLine marginTop={25} />
+      <DividingLine marginTop={25} color={COLOR.N600} />
 
       {
         isWalletClicked

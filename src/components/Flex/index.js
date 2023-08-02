@@ -32,7 +32,7 @@ export const Box = styled.div`
 export const DividingLine = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${COLOR.N600};
+  background-color: ${(props) => props.color ?? '#000000'};
   margin-top: ${(props) => `${props.marginTop}px`};
 `;
 
