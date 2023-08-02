@@ -176,7 +176,7 @@ function Home() {
                       userId={item.nickname}
                       nftName={item.nft_title}
                       title={item.title}
-                      image={item?.media_url}
+                      image={item?.media_url} //description이 html코드 일 때 이 부분 변경
                       long={item.liked_count}
                       short={item.disliked_count}
                       comment={item.comment_count}
