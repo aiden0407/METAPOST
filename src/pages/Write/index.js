@@ -10,22 +10,51 @@ import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row, FlexBox, Box } from 'components/Flex';
 
+//Quill
+import ReactQuill, { Quill } from 'react-quill';
+import quillEmoji from 'quill-emoji';
+import 'react-quill/dist/quill.snow.css';
+import 'quill-emoji/dist/quill-emoji.css';
+import './index.css';
+import ButtonChange from './button.js';
+
 //Api
-import { getPostDetail, uploadImage, writePost, editPost } from 'apis/Home';
+import { getPostDetail, writePost, editPost } from 'apis/Home';
 import { getMyCommunityList } from 'apis/Community';
 
 //Assets
 import arrowNextIcon from 'assets/icons/arrow_next.svg';
-import alignLeftIcon from 'assets/icons/align_left.svg';
-import alignLeftColorIcon from 'assets/icons/align_left_color.svg';
-import alignCenterIcon from 'assets/icons/align_center.svg';
-import alignCenterColorIcon from 'assets/icons/align_center_color.svg';
-import alignRightIcon from 'assets/icons/align_right.svg';
-import alignRightColorIcon from 'assets/icons/align_right_color.svg';
-import imageIcon from 'assets/icons/image.svg';
-import youtubeIcon from 'assets/icons/youtube.svg';
-import emojiIcon from 'assets/icons/emoji.svg';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
+
+const { EmojiBlot, ShortNameEmoji, ToolbarEmoji, TextAreaEmoji } = quillEmoji;
+
+Quill.register({
+  'formats/emoji': EmojiBlot,
+  'modules/emoji-shortname': ShortNameEmoji,
+  'modules/emoji-toolbar': ToolbarEmoji,
+  'modules/emoji-textarea': TextAreaEmoji
+}, true);
+
+const modules = {
+  toolbar: [
+    { align: '' }, 
+    { align: 'center' }, 
+    { align: 'right' }, 
+    'image',
+    'video',
+    'emoji',
+  ],
+  "emoji-toolbar": true,
+  "emoji-textarea": false,
+  "emoji-shortname": true,
+};
+
+const formats = [
+  'align',
+  'image',
+  'video',
+  'emoji',
+];
 
 function Write() {
 
@@ -40,10 +69,8 @@ function Write() {
   const [selectedCommunity, setSelectedCommunity] = useState();
   const [isNoticeChecked, setNoticeChecked] = useState(false);
   const [title, setTitle] = useState('');
-  const [alignOption, setAlignOption] = useState('left');
   const [description, setDescription] = useState('');
-  const [mediaUrl, setMediaUrl] = useState();
-  const fileInputRef = useRef(null);
+  ButtonChange()
 
   useEffect(() => {
     if (loginData) {
@@ -79,22 +106,6 @@ function Write() {
       }
       setTitle(response.data.detail[0].title);
       setDescription(response.data.detail[0].description);
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handlePostImage(file);
-    }
-  };
-
-  const handlePostImage = async function (file) {
-    try {
-      const response = await uploadImage(loginData.token.access, 'post', file);
-      setMediaUrl(response.data);
     } catch (error) {
       alert(error);
     }
@@ -210,39 +221,14 @@ function Write() {
           }}
         />
 
-        <Row gap={8}>
-          <OptionButton on={alignOption === 'left'} onClick={() => setAlignOption('left')}>
-            <Image src={alignOption === 'left' ? alignLeftColorIcon : alignLeftIcon} width={20} />
-          </OptionButton>
-          <OptionButton on={alignOption === 'center'} onClick={() => setAlignOption('center')}>
-            <Image src={alignOption === 'center' ? alignCenterColorIcon : alignCenterIcon} width={20} />
-          </OptionButton>
-          <OptionButton on={alignOption === 'right'} onClick={() => setAlignOption('right')}>
-            <Image src={alignOption === 'right' ? alignRightColorIcon : alignRightIcon} width={20} />
-          </OptionButton>
-          <OptionButton onClick={() => fileInputRef.current.click()}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileInputChange}
-              style={{ display: 'none' }}
-            />
-            <Image src={imageIcon} width={20} />
-          </OptionButton>
-          <OptionButton>
-            <Image src={youtubeIcon} width={20} />
-          </OptionButton>
-          <OptionButton>
-            <Image src={emojiIcon} width={20} />
-          </OptionButton>
-        </Row>
-
-        <DescriptionInput
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder='Please enter details.'
-          style={{ textAlign: `${alignOption}` }}
+        <ReactQuill 
+          theme="snow" 
+          value={description} 
+          onChange={setDescription}
+          modules={modules}
+          formats={formats}
         />
+
       </WriteBox>
 
       <DoneButton onClick={() => handleDone()}>
@@ -316,29 +302,8 @@ const CheckBox = styled.input.attrs({ type: 'checkbox' })`
 
 const TitleInput = styled.input`
   width: 100%;
-  padding: 11px 12px;
+  padding: 13px 12px;
   background-color: ${COLOR.N400};
-  border-radius: 4px;
-  font-size: 15px;
-`
-
-const OptionButton = styled.div`
-  width: 40px;
-  height: 40px;
-  background-color: ${COLOR.N400};
-  border-radius: 4px;
-  border: ${(props) => props.on ? `1px solid ${COLOR.BLUE2}` : 'none'};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`
-
-const DescriptionInput = styled.textarea`
-  width: 100%;
-  height: 480px;
-  padding: 12px;
-  background-color:${COLOR.N400};
   border-radius: 4px;
   font-size: 15px;
 `
