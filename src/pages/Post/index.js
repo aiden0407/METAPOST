@@ -11,6 +11,7 @@ import { Text } from 'components/Text';
 import { Image } from 'components/Image';
 import { Row, Column, FlexBox, DividingLine } from 'components/Flex';
 import Comment from 'components/Comment';
+import 'react-quill/dist/quill.snow.css';
 
 //Api
 import { getPostDetail, likedPost, postComment, uploadImage } from 'apis/Home';
@@ -256,8 +257,7 @@ function Post() {
           </Column>
         </Row>
 
-        {/* description이 html코드 일 때 아래 부분 변경 */}
-        <Text B0 color={COLOR.N800} marginTop={16}>{postDetail.detail[0]?.description}</Text>
+        <DescriptionBox className="view ql-editor" dangerouslySetInnerHTML={{ __html: postDetail.detail[0]?.description }} />
 
         <Row marginTop={48} gap={8} style={{ width: "100%", justifyContent: "center" }}>
           <LongShortButton onClick={()=>handleLikedPost(true)}>
@@ -394,6 +394,17 @@ const ToggleBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 7px;
+`
+
+const DescriptionBox = styled.div`
+  margin-top: 16px;
+  width: 100%;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0px;
+  img {
+    width: 100%;
+  }
 `
 
 const LongShortButton = styled.div`
