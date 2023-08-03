@@ -70,6 +70,14 @@ function Home() {
     }
   };
 
+  function ExportFirstImage(htmlText) {
+    const regex = /<img.*?src=['"](.*?)['"]/;
+    const match = htmlText.match(regex);
+    if (match) {
+      return match[1];
+    }
+  }
+
   const handleActiveButtonChange = async function (type) {
     setActiveButton(type);
     setPageIndex(0);
@@ -176,7 +184,7 @@ function Home() {
                       userId={item.nickname}
                       nftName={item.nft_title}
                       title={item.title}
-                      image={item?.media_url} //description이 html코드 일 때 이 부분 변경
+                      image={ExportFirstImage(item?.description)}
                       long={item.liked_count}
                       short={item.disliked_count}
                       comment={item.comment_count}
