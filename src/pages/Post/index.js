@@ -220,7 +220,7 @@ function Post() {
         <Row style={{ width: '100%', position: 'relative' }}>
           <Text B3 color={COLOR.N600}>{formatDateTime(postDetail.detail[0].created_at)}</Text>
           <FlexBox />
-          <Text B2 color={COLOR.N600}>{formatNumber(postDetail.detail[0].viewer_count ?? 0)}&nbsp;views</Text>
+          <Text B2 color={COLOR.N600}>{formatNumber(Math.round(postDetail.detail[0].viewer_count / 2))}&nbsp;views</Text>
           <StyledImage src={moreIcon} width={16} marginLeft={8} onClick={() => setIsToggleOpened(true)} />
           {
             isToggleOpened && <ToggleBox>
