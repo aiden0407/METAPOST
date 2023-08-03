@@ -58,6 +58,7 @@ function Profile() {
   const initMyProfile = async function () {
     try {
       const response = await getMyProfileData(loginData.token.access);
+      response.data.posts.reverse();
       setUserData(response.data);
     } catch (error) {
       alert(error);
@@ -67,6 +68,7 @@ function Profile() {
   const initUserProfile = async function () {
     try {
       const response = await getUserProfileData(profileId);
+      response.data.posts.reverse();
       setUserData(response.data);
     } catch (error) {
       alert(error);
@@ -103,7 +105,7 @@ function Profile() {
         ref={containerRef}
         style={!isDescriptionOver2Lines ? { display: 'flex', justifyContent: 'center' } : {}}
       >
-        {userData.description ?? 'Description does not exist'}
+        {userData.description?.length ? userData.description : 'Description does not exist'}
       </ProfileDescriptionContainer>
       <ExpandButton
         onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
