@@ -40,6 +40,8 @@ function Post() {
   const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState();
   const [isToggleOpened, setIsToggleOpened] = useState(false);
+  const [isPostLiked, setIsPostLiked] = useState();
+
   const [comment, setComment] = useState();
   const [mediaUrl, setMediaUrl] = useState();
   const fileInputRef = useRef(null);
@@ -139,17 +141,17 @@ function Post() {
 
   const handleLikedPost = async function (liked) {
     if (loginData) {
-        try {
-            await likedPost(loginData.token.access, postId, liked);
-            window.location.reload();
-        } catch (error) {
-            alert(error);
-        }
+      try {
+        await likedPost(loginData.token.access, postId, liked);
+        setIsPostLiked(liked);
+      } catch (error) {
+        alert(error);
+      }
     } else {
-        alert('You need to login');
-        navigate('/login');
+      alert('You need to login');
+      navigate('/login');
     }
-};
+  };
 
   const handlePostComment = async function () {
     if (loginData) {
@@ -263,12 +265,12 @@ function Post() {
           <LongShortButton onClick={()=>handleLikedPost(true)}>
             <Image src={longIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Long</Text>
-            <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].liked_count}</Text>
+            <LongShortCount B2 medium color="#26CA5E">{isPostLiked===true ? postDetail.detail[0].liked_count + 1 : postDetail.detail[0].liked_count}</LongShortCount>
           </LongShortButton>
           <LongShortButton onClick={()=>handleLikedPost(false)}>
             <Image src={shortIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Short</Text>
-            <Text B2 medium color={COLOR.N600}>{postDetail.detail[0].disliked_count}</Text>
+            <LongShortCount B2 medium color={COLOR.BLUE1}>{isPostLiked===false ? postDetail.detail[0].disliked_count + 1 : postDetail.detail[0].disliked_count}</LongShortCount>
           </LongShortButton>
         </Row>
       </ContentBox>
@@ -417,6 +419,11 @@ const LongShortButton = styled.div`
   align-items: center;
   gap: 4px;
   cursor: pointer;
+`
+
+const LongShortCount = styled(Text)`
+  width: 20px;
+  text-align: center;
 `
 
 const CommentBox = styled.div`
