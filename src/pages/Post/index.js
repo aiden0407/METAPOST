@@ -362,8 +362,7 @@ const CommunityBox = styled.div`
 
 const TitleBox = styled.div`
   width: 100%;
-  height: 46px;
-  padding: 0px 12px;
+  padding: 12px;
   background-color: #FFFFFF;
   border: 1px solid ${COLOR.N400};
   border-radius: 4px;
