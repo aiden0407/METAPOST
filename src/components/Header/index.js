@@ -83,6 +83,14 @@ function Header() {
     navigate('/login');
   }
 
+  function handleProfileMenu() {
+    if(isProfileToggleOpened){
+      appDispatch({type: 'CLOSE_PROFILE_TOGGLE'});
+    } else {
+      appDispatch({type: 'OPEN_PROFILE_TOGGLE'});
+    }
+  }
+
   function handleMyProfile() {
     appDispatch({type: 'CLOSE_PROFILE_TOGGLE'});
     navigate('/profile');
@@ -121,7 +129,7 @@ function Header() {
       <SearchIcon src={searchIcon} onClick={() => handleNavigateSearch()} />
       {
         loginData
-          ? <ProfileIcon src={loginData.user.nft_thumbnail ?? defaultProfile} onClick={() => appDispatch({type: 'OPEN_PROFILE_TOGGLE'})} />
+          ? <ProfileIcon src={loginData.user.nft_thumbnail ?? defaultProfile} onClick={() => handleProfileMenu()} />
           : <SignUpButton onClick={() => handleNavigateJoin()}>
             <Text B1 medium color="#FFFFFF">Join</Text>
           </SignUpButton>
