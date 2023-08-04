@@ -57,8 +57,8 @@ function SignUpEmail() {
   const handleEmailAuthSend = async function () {
     if (email.length) {
       try {
-        const response = await emailAuthSend(email);
-        setCode(response.data.code.toString());
+        await emailAuthSend(email);
+        alert('A verification email has been sent');
       } catch (error) {
         alert(error);
       }
