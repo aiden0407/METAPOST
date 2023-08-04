@@ -208,10 +208,15 @@ function Post() {
     }}>
       <CommunityBox>
         {
-          postDetail.detail[0].community_title && <>
+          postDetail.detail[0].community_title
+          && <Row onClick={() => {
+            if (postDetail.detail[0]?.community_id) {
+              navigate(`/community?community_id=${postDetail.detail[0]?.community_id}`)
+            }
+          }}>
             <Image src={postDetail.detail[0]?.community_logo_url ?? defaultCommunity} width={16} borderRadius="2px" onError={handleProfileImageError} />
             <Text B3 medium color={COLOR.N700} marginLeft={8}>{postDetail.detail[0].community_title}</Text>
-          </>
+          </Row>
         }
       </CommunityBox>
 
