@@ -403,7 +403,7 @@ const DescriptionBox = styled.div`
   background-color: transparent;
   border-radius: 0px;
   img {
-    width: 100%;
+    max-width: 100%;
   }
 `
 
