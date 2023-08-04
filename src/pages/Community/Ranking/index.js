@@ -141,7 +141,7 @@ function CommunityRanking() {
                   <Text B3 color={COLOR.N600}>{index+1}</Text>
                 </RankingNumberWrapper>
                 <Image src={item.logo_url} width={24} height={24} borderRadius="4px" onError={handleImageError} />
-                <Text B2 medium color={COLOR.N800} marginLeft={10}>{item.title}</Text>
+                <CommunityName B2 medium color={COLOR.N800} marginLeft={10}>{item.title}</CommunityName>
                 <FlexBox />
                 <MemberNumberWrapper>
                   <Text B2 color={COLOR.N700}>{(item.participant_count+1).toLocaleString()}</Text>
@@ -219,7 +219,7 @@ const RankingNumberWrapper = styled.div`
 `
 
 const CommunityName = styled(Text)`
-  width: 100%;
+  width: 65%;
   overflow: hidden;
   text-overflow: ellipsis;
 `
