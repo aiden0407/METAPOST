@@ -72,7 +72,7 @@ function Home() {
 
   function ExportFirstImage(htmlText) {
     const regex = /<img.*?src=['"](.*?)['"]/;
-    const match = htmlText.match(regex);
+    const match = htmlText?.match(regex);
     if (match) {
       return match[1];
     }
