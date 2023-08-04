@@ -245,6 +245,7 @@ function ProfileSettings() {
           }}
           marginTop={16}
           style={{ fontSize: '14px' }}
+          maxlength="25"
         />
       </ContentBox>
 

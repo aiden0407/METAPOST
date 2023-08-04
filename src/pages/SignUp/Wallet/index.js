@@ -142,6 +142,7 @@ function SignUpWallet() {
           setUserName(event.target.value);
         }}
         marginTop={8}
+        maxlength="25"
       />
 
       <Row marginTop={16}>
