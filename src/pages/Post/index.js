@@ -226,7 +226,7 @@ function Post() {
           {
             isToggleOpened && <ToggleBox>
               {
-                postDetail.detail[0].nickname === loginData.user.nickname && (<>
+                postDetail.detail[0].nickname === loginData?.user?.nickname && (<>
                   <StyledRow marginLeft={8} onClick={()=>handleEditPost()}>
                     <Image src={editIcon} width={14} />
                     <Text B3 color={COLOR.N700} marginLeft={8}>Edit</Text>
