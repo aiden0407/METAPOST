@@ -191,7 +191,7 @@ function Community() {
 
         <Row>
           <Image src={communityData.community.logo_url} width={32} height={32} borderRadius="4px" onError={handleProfileImageError} />
-          <Text H5 bold color={COLOR.N1000} marginLeft={8}>{communityData.community.title}</Text>
+          <CommunityName H5 bold color={COLOR.N1000} marginLeft={8}>{communityData.community.title}</CommunityName>
           {
             isCommunityOfficial && <Image src={verifiedIcon} width={16} marginLeft={4} />
           }
@@ -311,6 +311,12 @@ const WriteButton = styled.div`
   z-index: 1;
   opacity: ${props => (props.show ? 1 : 0)};
   transition: opacity 0.3s ease;
+`
+
+const CommunityName = styled(Text)`
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const JoinButton = styled.div`
