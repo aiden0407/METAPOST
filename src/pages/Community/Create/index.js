@@ -104,6 +104,7 @@ function CommunityCreate() {
               setName(event.target.value);
             }}
             marginTop={16}
+            maxlength="30"
           />
         </ContentBox>
 
