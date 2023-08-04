@@ -435,6 +435,7 @@ const ProfileImageSelectBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  overflow-y: scroll;
 `
 
 const ProfileImage = styled.img`
