@@ -87,6 +87,7 @@ img {
 input {
 	box-sizing: border-box;
 	border: none;
+	touch-action: manipulation;
 }
 input:focus {
 	outline: none;
@@ -101,6 +102,7 @@ textarea {
 	box-sizing: border-box;
 	line-height: 150%;
 	font-family: Pretendard;
+	touch-action: manipulation;
 }
 ::-webkit-scrollbar {
 	display: none;
