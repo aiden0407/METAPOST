@@ -221,7 +221,7 @@ function Post() {
       </CommunityBox>
 
       <TitleBox>
-        <Text H5 bold color={COLOR.N900}>{postDetail.detail[0].title}</Text>
+        <Text H5 bold color={COLOR.N900} style={{width: '100%', overflow: 'hidden', textOverflow: 'ellipsis'}}>{postDetail.detail[0].title}</Text>
       </TitleBox>
 
       <ContentBox>

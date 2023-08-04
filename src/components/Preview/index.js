@@ -66,7 +66,7 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
                 </Column>
             </Row>
 
-            <Text B1 medium color={COLOR.N800} marginTop={10}>{title}</Text>
+            <Text B1 medium color={COLOR.N800} marginTop={10} style={{width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', paddingBottom: 1}}>{title}</Text>
             {
                 image && <Image src={image} style={{ width: "100%" }} borderRadius="8px" marginTop={10} />
             }
