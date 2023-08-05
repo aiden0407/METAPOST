@@ -56,6 +56,22 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
         }
     }
 
+    function linkifyUrls(inputText) {
+        // 정규식 패턴을 사용하여 URL을 감지합니다.
+        const urlPattern = /((https?:\/\/|www\.)[^\s<>]+)/g;
+      
+        // 문자열 내의 URL을 찾아서 <a> 태그로 감싸줍니다.
+        const linkedText = inputText.replace(urlPattern, (url) => {
+          // URL이 'http://' 또는 'https://'로 시작하지 않으면 'http://'를 추가합니다.
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'http://' + url;
+          }
+          return `<a href="${encodeURI(url)}" target="_blank">${url}</a>`;
+        });
+      
+        return linkedText;
+      }
+
     const handleLikedComment = async function (liked) {
         if (loginData) {
             try {
@@ -133,7 +149,7 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
             {
                 image && <Image src={image} style={{ width: "100%" }} marginTop={6} />
             }
-            <Text B1 color={COLOR.N800} marginTop={8}>{text}</Text>
+            <Text B1 color={COLOR.N800} marginTop={8} dangerouslySetInnerHTML={{ __html: linkifyUrls(text) }} />
 
             <Row marginTop={8} gap={8}>
                 <StyledRow gap={4} onClick={()=>handleLikedComment(true)}>
