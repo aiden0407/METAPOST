@@ -51,9 +51,12 @@ function Layout({ children }) {
           <Header />
         </HeaderContainer>
 
-        <BodyWrapper onClick={()=>dispatch({type: 'CLOSE_PROFILE_TOGGLE'})}>
-          {children}
-        </BodyWrapper>
+        {
+          !isSearchPopupOpened
+          && <BodyWrapper onClick={() => dispatch({ type: 'CLOSE_PROFILE_TOGGLE' })}>
+            {children}
+          </BodyWrapper>
+        }
 
         {
           handleFooter(location.pathname)

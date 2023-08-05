@@ -25,7 +25,7 @@ function Search() {
   const navigate = useNavigate();
   const { dispatch } = useContext(AppContext);
   const [searchText, setSearchText] = useState('');
-  const [isToggleOpened, setIsToggleOpened] = useState(false);
+  //const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [selectedOption, setSelectedOption] = useState('community');
   const [searchResult, setSearchResult] = useState([]);
 
@@ -72,14 +72,15 @@ function Search() {
           <SearchInput
             value={searchText}
             onChange={handleTextChange}
-            onFocus={() => setIsToggleOpened(true)}
+            //onFocus={() => setIsToggleOpened(true)}
             placeholder='Search'
           />
         </HeaderWrapper>
       </HeaderContainer>
 
       {
-        isToggleOpened && <SearchTapWrapper>
+        // isToggleOpened && <SearchTapWrapper>
+        <SearchTapWrapper>
           <SearchTap>
             <TapRow
               onClick={() => { handleSelectedOption('community') }}
@@ -106,8 +107,9 @@ function Search() {
         </SearchTapWrapper>
       }
       {
-        searchText
-          ? <ResultWrapper>
+        // searchText
+        //   ? <ResultWrapper>
+        <ResultWrapper>
             {
               searchResult?.length
                 ? <>
@@ -190,16 +192,16 @@ function Search() {
                 </NoResultArea>
             }
           </ResultWrapper>
-          : <TouchableArea
-            onClick={() => {
-              if (!searchText) {
-                setIsToggleOpened(false);
-                if (!isToggleOpened) {
-                  handleSearchClose();
-                }
-              }
-            }}
-          />
+          // : <TouchableArea
+          //   onClick={() => {
+          //     if (!searchText) {
+          //       setIsToggleOpened(false);
+          //       if (!isToggleOpened) {
+          //         handleSearchClose();
+          //       }
+          //     }
+          //   }}
+          // />
       }
 
     </PopupContainer>
