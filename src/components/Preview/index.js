@@ -84,7 +84,7 @@ function Preview({ postId, profileImage, userId, nftName, title, image, long, sh
                     <Image src={commentIcon} width={12} />
                     <Text B3 medium color={COLOR.N700} marginLeft={2}>{comment}</Text>
                 </IconBox>
-                <Text B3 medium color={COLOR.N600}>{communityName}</Text>
+                <Text B3 medium color={COLOR.N600} style={{width: '100%', overflow: 'hidden', textOverflow: 'ellipsis'}}>{communityName}</Text>
             </Row>
         </PostBox>
     )
