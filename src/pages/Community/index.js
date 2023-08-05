@@ -22,8 +22,8 @@ import settingIcon from 'assets/icons/setting.svg';
 
 import fireActiveIcon from 'assets/icons/fire_active.svg';
 import fireInactiveIcon from 'assets/icons/fire_inactive.svg';
-import followActiveIcon from 'assets/icons/follow_active.svg';
-import followInactiveIcon from 'assets/icons/follow_inactive.svg';
+import noticeActiveIcon from 'assets/icons/notice_active.svg';
+import noticeInactiveIcon from 'assets/icons/notice_inactive.svg';
 import newActiveIcon from 'assets/icons/new_active.svg';
 import newInactiveIcon from 'assets/icons/new_inactive.svg';
 import defaultCommunity from 'assets/icons/icon_default_community.png';
@@ -107,6 +107,14 @@ function Community() {
       alert(error);
     }
   };
+
+  function ExportFirstImage(htmlText) {
+    const regex = /<img.*?src=['"](.*?)['"]/;
+    const match = htmlText?.match(regex);
+    if (match) {
+      return match[1];
+    }
+  }
 
   const handleChangePaginationIndex = async function (index) {
     window.scrollTo({ top: 0 });
@@ -240,10 +248,10 @@ function Community() {
               <Text P2 color={activeButton === 'hot' ? COLOR.N200 : COLOR.N600} marginLeft={4}>HOT</Text>
             </Row>
           </MenuButton>
-          <MenuButton active={activeButton === 'follow'} onClick={() => handleActiveButtonChange('follow')}>
+          <MenuButton active={activeButton === 'notice'} onClick={() => handleActiveButtonChange('notice')}>
             <Row>
-              <Image src={activeButton === 'follow' ? followActiveIcon : followInactiveIcon} width={14} />
-              <Text P2 color={activeButton === 'follow' ? COLOR.N200 : COLOR.N600} marginLeft={4}>FOLLOW</Text>
+              <Image src={activeButton === 'notice' ? noticeActiveIcon : noticeInactiveIcon} width={14} />
+              <Text P2 color={activeButton === 'notice' ? COLOR.N200 : COLOR.N600} marginLeft={4}>NOTICE</Text>
             </Row>
           </MenuButton>
           <MenuButton active={activeButton === 'new'} onClick={() => handleActiveButtonChange('new')}>
@@ -267,7 +275,7 @@ function Community() {
                       userId={item.nickname}
                       nftName={item.nft_title}
                       title={item.title}
-                      image={item?.image}
+                      image={ExportFirstImage(item?.description)}
                       long={item.liked_count}
                       short={item.disliked_count}
                       comment={item.comment_count}
