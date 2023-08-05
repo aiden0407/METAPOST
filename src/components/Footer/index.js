@@ -33,10 +33,8 @@ function Footer() {
         <FooterWrapper>
             <StyledText B2 medium color={COLOR.N700} onClick={() => handleNavigate('')}>Home</StyledText>
             <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('notice')}>Notice</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('suggestion')}>Suggestion</StyledText>
             <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('policy')}>Policy</StyledText>
             <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('terms')}>Terms of Service</StyledText>
-            <StyledText B2 medium color={COLOR.N700} marginTop={16} onClick={() => handleNavigate('contact')}>Contact</StyledText>
 
             <BackToTopButton onClick={() => handleBackToTop()}>
                 <Image src={arrowUp} width={16} />
