@@ -12,7 +12,7 @@ import { Row, FlexBox } from 'components/Flex';
 import Preview from 'components/Preview';
 
 //Api
-import { getCommunityInfo, postCommunityJoin } from 'apis/Community';
+import { getCommunityInfo, postCommunityJoin, postCommunityLeave } from 'apis/Community';
 
 //Assets
 import writeIcon from 'assets/icons/write.svg';
@@ -174,6 +174,15 @@ function Community() {
     }
   };
 
+  const handleLeave = async function () {
+    try {
+      await postCommunityLeave(loginData.token.access, communityId);
+      window.location.reload();
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   const handleProfileImageError = (error) => {
     error.target.src = defaultCommunity;
   }
@@ -210,10 +219,13 @@ function Community() {
         </Row>
 
         {
-          !(communityData.owner || communityData.joined)
-          && <JoinButton onClick={() => handleJoin()}>
-            <Text B1 medium color="#FFFFFF">Join</Text>
+          (communityData.owner || communityData.joined)
+          ? <JoinButton onClick={() => handleLeave()}>
+            <Text B1 medium color="#FFFFFF">Leave</Text>
           </JoinButton>
+          :<JoinButton onClick={() => handleJoin()}>
+          <Text B1 medium color="#FFFFFF">Join</Text>
+        </JoinButton>
         }
 
         <RatioParent>
