@@ -82,10 +82,6 @@ function Write() {
     try {
       const response = await getMyCommunityList(loginData.token.access);
       setCommunityData(response.data);
-      if (response.data.length) {
-        setSelectedCommunity(response.data[0]);
-      }
-
       if(postId){
         initEdit(response.data);
       }
@@ -162,7 +158,7 @@ function Write() {
         }
         {
           communityData?.length
-            ? <Text B3 medium color={COLOR.N1000} marginLeft={8}>{selectedCommunity?.fields?.title ?? 'None'}</Text>
+            ? <Text B3 medium color={COLOR.N1000} marginLeft={8} style={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selectedCommunity?.fields?.title ?? 'Free'}</Text>
             : <Text B3 medium color={COLOR.N600} marginLeft={8}>Community not found</Text>
         }
         <FlexBox />
@@ -180,7 +176,7 @@ function Write() {
                 setIsToggleOpened(!isToggleOpened);
               }}>
               <Box width={24} height={24} />
-              <Text B3 medium color={selectedCommunity?.fields?.title ? COLOR.N700 : '#000000'} marginLeft={8}>None</Text>
+              <Text B3 medium color={selectedCommunity?.fields?.title ? COLOR.N700 : '#000000'} marginLeft={8}>Free</Text>
             </StyledRow>
 
             {communityData.map((item) =>
@@ -191,7 +187,7 @@ function Write() {
                   setIsToggleOpened(!isToggleOpened);
                 }}>
                 <Image src={item?.fields?.logo_url} width={24} height={24} onError={handleImageError} />
-                <Text B3 medium color={selectedCommunity?.fields?.title === item.fields.title ? '#000000' : COLOR.N700} marginLeft={8}>{item.fields.title}</Text>
+                <Text B3 medium color={selectedCommunity?.fields?.title === item.fields.title ? '#000000' : COLOR.N700} marginLeft={8} style={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.fields.title}</Text>
               </StyledRow>)
             }
           </ToggleMenu>
