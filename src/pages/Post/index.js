@@ -139,6 +139,34 @@ function Post() {
     }
   }
 
+  function linkifyUrls(inputText) {
+    const urlPattern = /((https?:\/\/|www\.)[^\s<>]+)/g;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(inputText, 'text/html');
+
+    const paragraphs = doc.querySelectorAll('p');
+
+    paragraphs.forEach((paragraph) => {
+      // 이미지나 iframe 태그가 있는 경우 건너뜁니다.
+      if (paragraph.querySelector('img, iframe')) {
+        return;
+      }
+
+      const paragraphText = paragraph.innerHTML;
+      const linkedText = paragraphText.replace(urlPattern, (url) => {
+        // URL이 'http://' 또는 'https://'로 시작하지 않으면 'http://'를 추가합니다.
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'http://' + url;
+        }
+        return `<a href="${encodeURI(url)}" target="_blank">${url}</a>`;
+      });
+
+      paragraph.innerHTML = linkedText;
+    });
+
+    return doc.body.innerHTML;
+  }
+
   const handleLikedPost = async function (liked) {
     if (loginData) {
       try {
@@ -267,7 +295,7 @@ function Post() {
           </Column>
         </Row>
 
-        <DescriptionBox className="view ql-editor" dangerouslySetInnerHTML={{ __html: postDetail.detail[0]?.description }} />
+        <DescriptionBox className="view ql-editor" dangerouslySetInnerHTML={{ __html: linkifyUrls(postDetail.detail[0]?.description) }} />
 
         <Row marginTop={48} gap={8} style={{ width: "100%", justifyContent: "center" }}>
           <LongShortButton onClick={()=>handleLikedPost(true)}>
