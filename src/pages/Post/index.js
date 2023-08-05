@@ -286,7 +286,7 @@ function Post() {
       <CommentBox>
         <Row>
           <Image src={commentIcon} width={16} />
-          <Text B2 medium color={COLOR.N800} marginLeft={8}>All Commnets</Text>
+          <Text B2 medium color={COLOR.N800} marginLeft={8}>All Comments</Text>
           <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.comments.length}</Text>
         </Row>
 
