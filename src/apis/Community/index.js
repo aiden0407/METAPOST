@@ -97,6 +97,26 @@ export const postCommunityJoin = async function (accessToken, communityId) {
   }
 }
 
+export const postCommunityLeave = async function (accessToken, communityId) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/community/leave`,
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        community_id: communityId,
+      }
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
 export const postCommunityVerification = async function (accessToken, communityId) {
   try {
     let options = {
