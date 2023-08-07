@@ -4,6 +4,7 @@ import { createContext, useReducer } from "react";
 //initial state
 const initialState = {
   isProfileToggleOpened: false,
+  isFindPasswordPopupOpened: false,
   isSearchPopupOpened: false,
   isReportPopupOpened: false,
   reportData: {
@@ -29,6 +30,18 @@ const reducer = (state, action) => {
       return {
         ...state,
         isProfileToggleOpened: false,
+      };
+
+    case 'OPEN_FIND_PASSWORD_POPUP':
+      return {
+        ...state,
+        isFindPasswordPopupOpened: true,
+      };
+
+    case 'CLOSE_FIND_PASSWORD_POPUP':
+      return {
+        ...state,
+        isFindPasswordPopupOpened: false,
       };
 
     case 'OPEN_SEARCH_POPUP':
