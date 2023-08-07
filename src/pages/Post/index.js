@@ -26,6 +26,7 @@ import longIcon from 'assets/icons/long.svg';
 import shortIcon from 'assets/icons/short.svg';
 import commentIcon from 'assets/icons/comment_black.svg';
 import imageIcon from 'assets/icons/image.svg';
+import arrowNext from 'assets/icons/arrow_next.svg';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
 import defaultCommunity from 'assets/icons/icon_default_community.png';
 
@@ -39,6 +40,9 @@ function Post() {
   const { state: { loginData } } = useContext(AuthContext);
   const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState();
+  const [maxLength, setMaxLength] = useState();
+  const [pageIndex, setPageIndex] = useState(0);
+
   const [isToggleOpened, setIsToggleOpened] = useState(false);
   const [isPostLiked, setIsPostLiked] = useState();
 
@@ -52,43 +56,47 @@ function Post() {
     }
   }, []);
 
+  function commentSort(commentsArray) {
+    const comments = commentsArray;
+    let depth0Comments = [];
+    let depth1Comments = [];
+    let depth2Comments = [];
+    for (const comment of comments) {
+      if (comment.depth === 0) {
+        depth0Comments.push(comment);
+      }
+      if (comment.depth === 1) {
+        depth1Comments.push(comment);
+      }
+      if (comment.depth === 2) {
+        depth2Comments.push(comment);
+      }
+    }
+
+    for (const depth0 of depth0Comments) {
+      for (const depth1 of depth1Comments) {
+        if (depth1.parent_id === depth0.id) {
+          depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth1);
+        }
+      }
+    }
+    for (const depth0 of depth0Comments) {
+      for (const depth2 of depth2Comments) {
+        if (depth2.parent_id === depth0.id) {
+          depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth2);
+        }
+      }
+    }
+
+    return depth0Comments;
+  }
+
   const initPostDetail = async function () {
     try {
-      const response = await getPostDetail(postId);
-      const comments = response.data.comments;
-      let depth0Comments = [];
-      let depth1Comments = [];
-      let depth2Comments = [];
-      for (const comment of comments) {
-        if (comment.depth === 0) {
-          depth0Comments.push(comment);
-        }
-        if (comment.depth === 1) {
-          depth1Comments.push(comment);
-        }
-        if (comment.depth === 2) {
-          depth2Comments.push(comment);
-        }
-      }
-      depth0Comments = depth0Comments.reverse();
-
-      for (const depth0 of depth0Comments) {
-        for (const depth1 of depth1Comments) {
-          if (depth1.parent_id === depth0.id) {
-            depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth1);
-          }
-        }
-      }
-      for (const depth0 of depth0Comments) {
-        for (const depth2 of depth2Comments) {
-          if (depth2.parent_id === depth0.id) {
-            depth0Comments.splice(depth0Comments.indexOf(depth0Comments.find(c => c.id === depth0.id)) + 1, 0, depth2);
-          }
-        }
-      }
-
-      response.data.comments = depth0Comments;
+      const response = await getPostDetail(postId, 0);
+      response.data.comments = commentSort(response.data.comments);
       setPostDetail(response.data);
+      setMaxLength(response.data.commnet_count);
     } catch (error) {
       alert(error);
     }
@@ -191,9 +199,10 @@ function Post() {
       try {
         await postComment(loginData.token.access, postId, undefined, comment, mediaUrl);
         setMediaUrl();
-        const response = await getPostDetail(postId);
-        response.data.comments.reverse();
+        const response = await getPostDetail(postId, 0);
+        response.data.comments = commentSort(response.data.comments);
         setPostDetail(response.data);
+        setMaxLength(response.data.commnet_count);
         setComment('');
       } catch (error) {
         alert(error);
@@ -219,6 +228,51 @@ function Post() {
       alert(error);
     }
   };
+
+  const handleChangePaginationIndex = async function (index) {
+    setPageIndex(index);
+    try {
+      const response = await getPostDetail(postId, index);
+      response.data.comments = commentSort(response.data.comments);
+      setPostDetail(response.data);
+      setMaxLength(response.data.commnet_count);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  function Pagination() {
+    const paginationArray = [];
+    const totalPageIndex = Math.floor((maxLength - 1) / 20);
+
+    for (let ii = 0; ii <= totalPageIndex; ii++) {
+      const pageRowIndex = Math.floor(ii / 5);
+      if (!paginationArray[pageRowIndex]) {
+        paginationArray[pageRowIndex] = [];
+      }
+      paginationArray[pageRowIndex].push(ii);
+    }
+
+    return (
+      <Row marginTop={24} gap={8} style={{ width: "100%", justifyContent: "center" }}>
+        <PageButton onClick={() => pageIndex > 0 && handleChangePaginationIndex(pageIndex - 1)}>
+          <Image src={arrowNext} width={24} style={{ transform: "scaleX(-1)", opacity: pageIndex === 0 && 0.4 }} />
+        </PageButton>
+
+        {
+          paginationArray?.[Math.floor(pageIndex / 5)]?.map((item) =>
+            <PageButton key={item} onClick={() => handleChangePaginationIndex(item)}>
+              <Text B1 medium color={pageIndex === item ? COLOR.BLUE1 : COLOR.N600}>{item + 1}</Text>
+            </PageButton>
+          )
+        }
+
+        <PageButton onClick={() => pageIndex < totalPageIndex && handleChangePaginationIndex(pageIndex + 1)}>
+          <Image src={arrowNext} width={24} style={{ opacity: (pageIndex === totalPageIndex || totalPageIndex <= 0 ) && 0.4 }} />
+        </PageButton>
+      </Row>
+    )
+  }
 
   const handleProfileImageError = (error) => {
     error.target.src = defaultCommunity;
@@ -315,7 +369,7 @@ function Post() {
         <Row>
           <Image src={commentIcon} width={16} />
           <Text B2 medium color={COLOR.N800} marginLeft={8}>All Comments</Text>
-          <Text B2 medium color={COLOR.N700} marginLeft={8}>{postDetail.comments.length}</Text>
+          <Text B2 medium color={COLOR.N700} marginLeft={8}>{maxLength ?? 0}</Text>
         </Row>
 
         <CommentWriteBox>
@@ -376,8 +430,10 @@ function Post() {
               />)
           }
         </CommentWrittenBox>
-
       </CommentBox>
+
+      <Pagination />
+
     </PostContainer>
   );
 }
@@ -516,6 +572,18 @@ const CommentWrittenBox = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`
+
+const PageButton = styled.div`
+  width: 32px;
+  height: 32px;
+  background-color: #FFFFFF;
+  border: 1px solid ${COLOR.N400};
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 `
 
 const StyledImage = styled(Image)`
