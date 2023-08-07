@@ -26,7 +26,7 @@ import reportIcon from 'assets/icons/report.svg';
 import imageIcon from 'assets/icons/image.svg';
 import defaultProfile from 'assets/icons/icon_default_profile.png';
 
-function Comment({ postId, commentId, profileImage, userId, nftName, text, image, like, dislike, createdAt, depth }) {
+function Comment({ postId, commentId, profileImage, userId, userName, nftName, text, image, like, dislike, createdAt, depth }) {
 
     const navigate = useNavigate();
     const { state: { loginData } } = useContext(AuthContext);
@@ -127,23 +127,33 @@ function Comment({ postId, commentId, profileImage, userId, nftName, text, image
     return (
         <PostBox depth={depth}>
             <Row>
-                <Image src={profileImage ?? defaultProfile} width={33} borderRadius="4px" />
-                <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
-                    <Row style={{ width: "100%" }}>
-                        <Text B2 medium color={COLOR.N700}>{userId}</Text>
-                        <FlexBox />
-                        <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
-                    </Row>
-                    <Row>
-                        <Image src={nftName ? nftIcon : nftNoneIcon} width={16} />
-                        {
-                            nftName
-                                ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
-                                : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+                <Row
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                        if (userId === loginData.user.id) {
+                            navigate(`/profile`)
+                        } else {
+                            navigate(`/profile?profile_id=${userId}`)
                         }
-                    </Row>
-
-                </Column>
+                    }}
+                >
+                    <Image src={profileImage ?? defaultProfile} width={33} borderRadius="4px" />
+                    <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
+                        <Row style={{ width: "100%" }}>
+                            <Text B2 medium color={COLOR.N700}>{userName}</Text>
+                            <FlexBox />
+                            <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
+                        </Row>
+                        <Row>
+                            <Image src={nftName ? nftIcon : nftNoneIcon} width={16} />
+                            {
+                                nftName
+                                    ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{nftName}</Text>
+                                    : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+                            }
+                        </Row>
+                    </Column>
+                </Row>
             </Row>
 
             {
