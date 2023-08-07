@@ -20,13 +20,14 @@ export const getMainPost = async function (type, offset) {
   }
 }
 
-export const getPostDetail = async function (postId) {
+export const getPostDetail = async function (postId, offset) {
   try {
     let options = {
       url: `${process.env.REACT_APP_API_HOST}/post/detail`,
       method: 'POST',
       data: {
         post_id: postId,
+        offset: offset,
       }
     }
     const response = await axios(options);
