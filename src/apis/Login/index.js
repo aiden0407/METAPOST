@@ -35,3 +35,17 @@ export const loginByWallet = async function (walletAdress) {
         throw error.response.data;
     }
 }
+
+export const findPassword = async function (email) {
+    try {
+        let options = {
+            url: `${process.env.REACT_APP_API_HOST}/reset-password/${email}`,
+            method: 'GET',
+        }
+        const response = await axios(options);
+        return response;
+        
+    } catch (error) {
+        throw error.response.data;
+    }
+}
