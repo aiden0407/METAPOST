@@ -8,13 +8,14 @@ import styled from 'styled-components';
 import { COLOR } from 'constants/design';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
-import ReportPopup from 'components/Popup/ReportPopup';
+import FindPassword from 'components/Popup/FindPassword';
 import Search from 'components/Popup/Search';
+import Report from 'components/Popup/Report';
 
 function Layout({ children }) {
 
   const location = useLocation();
-  const { state: { isReportPopupOpened, isSearchPopupOpened }, dispatch } = useContext(AppContext);
+  const { state: { isFindPasswordPopupOpened, isSearchPopupOpened, isReportPopupOpened }, dispatch } = useContext(AppContext);
 
   const handleChangeColor = (value) => {
     switch (value) {
@@ -67,10 +68,13 @@ function Layout({ children }) {
       </Container>
 
       {
-        isReportPopupOpened && <ReportPopup />
+        isFindPasswordPopupOpened && <FindPassword />
       }
       {
         isSearchPopupOpened && <Search />
+      }
+      {
+        isReportPopupOpened && <Report />
       }
     </>
   )

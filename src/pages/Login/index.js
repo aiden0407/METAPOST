@@ -1,6 +1,7 @@
 //React
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from 'context/AuthContext';
+import { AppContext } from 'context/AppContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -31,6 +32,7 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { dispatch } = useContext(AuthContext);
+  const { dispatch: appDispatch } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRememberChecked, setIsRememberChecked] = useState(false);
@@ -138,6 +140,10 @@ function Login() {
     }
   }
 
+  function handleFindPassword() {
+    appDispatch({ type: 'OPEN_FIND_PASSWORD_POPUP' });
+  }
+
   function handleNavigateSignUpEmail() {
     navigate('/signup/email');
   }
@@ -214,7 +220,7 @@ function Login() {
       }
 
       <Row marginTop={24}>
-        <StyledText B1 medium color={COLOR.N700}>Forgot password?</StyledText>
+        <StyledText B1 medium color={COLOR.N700} onClick={() => handleFindPassword()} >Forgot password?</StyledText>
         <FlexBox />
         <Text B1 medium color={COLOR.N700}>Need an account?</Text>
         <StyledText B1 medium color={COLOR.BLUE1} marginLeft={6} onClick={() => handleNavigateSignUpEmail()}>Sign up</StyledText>
