@@ -334,19 +334,30 @@ function Post() {
           }
         </Row>
 
-        <Row marginTop={18} style={{ width: "100%" }}>
-          <Image src={postDetail.detail[0]?.nft_thumbnail ?? defaultProfile} width={33} borderRadius="4px" />
-          <Column marginLeft={8} gap={4}>
-            <Text B2 medium color={COLOR.N700}>{postDetail.detail[0].nickname}</Text>
-            <Row>
-              <Image src={postDetail.detail[0].nft_title ? nftIcon : nftNoneIcon} width={16} />
-              {
-                postDetail.detail[0].nft_title
-                  ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.detail[0].nft_title}</Text>
-                  : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+        <Row marginTop={18}>
+          <Row
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (postDetail.detail[0]?.user_id === loginData.user.id) {
+                navigate(`/profile`)
+              } else {
+                navigate(`/profile?profile_id=${postDetail.detail[0]?.user_id}`)
               }
-            </Row>
-          </Column>
+            }}
+          >
+            <Image src={postDetail.detail[0]?.nft_thumbnail ?? defaultProfile} width={33} borderRadius="4px" />
+            <Column marginLeft={8} gap={4}>
+              <Text B2 medium color={COLOR.N700}>{postDetail.detail[0].nickname}</Text>
+              <Row>
+                <Image src={postDetail.detail[0].nft_title ? nftIcon : nftNoneIcon} width={16} />
+                {
+                  postDetail.detail[0].nft_title
+                    ? <Text B3 medium color={COLOR.N700} marginLeft={4}>{postDetail.detail[0].nft_title}</Text>
+                    : <Text B3 medium color={COLOR.N600} marginLeft={4}>None</Text>
+                }
+              </Row>
+            </Column>
+          </Row>
         </Row>
 
         <DescriptionBox className="view ql-editor" dangerouslySetInnerHTML={{ __html: linkifyUrls(postDetail.detail[0]?.description) }} />
@@ -419,7 +430,8 @@ function Post() {
                 postId={postId}
                 commentId={item.id}
                 profileImage={item.nft_thumbnail}
-                userId={item.nickname}
+                userId={item.user_id}
+                userName={item.nickname}
                 nftName={item.nft_title}
                 text={item.text}
                 image={item.media_url}
