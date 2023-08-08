@@ -40,14 +40,11 @@ function Post() {
   const { state: { loginData } } = useContext(AuthContext);
   const { dispatch } = useContext(AppContext);
   const [postDetail, setPostDetail] = useState();
-  const [maxLength, setMaxLength] = useState();
-  const [pageIndex, setPageIndex] = useState(0);
-
   const [isToggleOpened, setIsToggleOpened] = useState(false);
-  const [isPostLiked, setIsPostLiked] = useState();
-
   const [comment, setComment] = useState();
   const [mediaUrl, setMediaUrl] = useState();
+  const [maxLength, setMaxLength] = useState();
+  const [pageIndex, setPageIndex] = useState(0);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -178,8 +175,13 @@ function Post() {
   const handleLikedPost = async function (liked) {
     if (loginData) {
       try {
-        await likedPost(loginData.token.access, postId, liked);
-        setIsPostLiked(liked);
+        const response = await likedPost(loginData.token.access, postId, liked);
+        const updatedDetail = { ...postDetail.detail[0], ...response.data };
+        const updatedPostDetail = {
+          ...postDetail,
+          detail: [updatedDetail],
+        };
+        setPostDetail(updatedPostDetail);
       } catch (error) {
         alert(error);
       }
@@ -366,12 +368,12 @@ function Post() {
           <LongShortButton onClick={()=>handleLikedPost(true)}>
             <Image src={longIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Long</Text>
-            <LongShortCount B2 medium color="#26CA5E">{isPostLiked===true ? postDetail.detail[0].liked_count + 1 : postDetail.detail[0].liked_count}</LongShortCount>
+            <LongShortCount B2 medium color="#26CA5E">{postDetail.detail[0].liked_count}</LongShortCount>
           </LongShortButton>
           <LongShortButton onClick={()=>handleLikedPost(false)}>
             <Image src={shortIcon} width={16} />
             <Text B2 medium color={COLOR.N700}>Short</Text>
-            <LongShortCount B2 medium color={COLOR.BLUE1}>{isPostLiked===false ? postDetail.detail[0].disliked_count + 1 : postDetail.detail[0].disliked_count}</LongShortCount>
+            <LongShortCount B2 medium color={COLOR.BLUE1}>{postDetail.detail[0].disliked_count}</LongShortCount>
           </LongShortButton>
         </Row>
       </ContentBox>
