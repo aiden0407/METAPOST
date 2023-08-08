@@ -126,14 +126,16 @@ function Comment({ postId, commentId, profileImage, userId, userName, nftName, t
 
     return (
         <PostBox depth={depth}>
-            <Row>
+            <Row style={{width: '100%', alignItems: 'flex-start'}}>
                 <Row
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
-                        if (userId === loginData.user.id) {
-                            navigate(`/profile`)
+                        if (userId === loginData?.user?.id) {
+                            navigate(`/profile`);
+                            window.scrollTo({ top: 0 });
                         } else {
-                            navigate(`/profile?profile_id=${userId}`)
+                            navigate(`/profile?profile_id=${userId}`);
+                            window.scrollTo({ top: 0 });
                         }
                     }}
                 >
@@ -141,8 +143,6 @@ function Comment({ postId, commentId, profileImage, userId, userName, nftName, t
                     <Column marginLeft={8} gap={4} style={{ width: "100%" }}>
                         <Row style={{ width: "100%" }}>
                             <Text B2 medium color={COLOR.N700}>{userName}</Text>
-                            <FlexBox />
-                            <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
                         </Row>
                         <Row>
                             <Image src={nftName ? nftIcon : nftNoneIcon} width={16} />
@@ -154,6 +154,8 @@ function Comment({ postId, commentId, profileImage, userId, userName, nftName, t
                         </Row>
                     </Column>
                 </Row>
+                <FlexBox />
+                <Text B3 medium color={COLOR.N600}>{getTimeDifference(createdAt)}</Text>
             </Row>
 
             {
