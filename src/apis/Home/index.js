@@ -20,6 +20,20 @@ export const getMainPost = async function (type, offset) {
   }
 }
 
+export const getMainPostLength = async function (type) {
+  try {
+    let options = {
+      url: `${process.env.REACT_APP_API_HOST}/post-count?type=normal&tap_type=${type}`,
+      method: 'GET',
+    }
+    const response = await axios(options);
+    return response;
+
+  } catch (error) {
+    throw error.response.data;
+  }
+}
+
 export const getPostDetail = async function (postId, offset) {
   try {
     let options = {
