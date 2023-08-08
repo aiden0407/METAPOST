@@ -11,7 +11,7 @@ import { Row } from 'components/Flex';
 import Preview from 'components/Preview';
 
 //Api
-import { getMainPost } from 'apis/Home';
+import { getMainPost, getMainPostLength } from 'apis/Home';
 
 //Assets
 import fireActiveIcon from 'assets/icons/fire_active.svg';
@@ -64,7 +64,14 @@ function Main() {
     try {
       const response = await getMainPost(activeButton, 0);
       setMainData(response.data);
-      setMaxLength(response.data.length);
+
+      try {
+        const response = await getMainPostLength(activeButton);
+        setMaxLength(response.data.post_count);
+      } catch (error) {
+        alert(error);
+      }
+
     } catch (error) {
       alert(error);
     }
@@ -84,7 +91,14 @@ function Main() {
     try {
       const response = await getMainPost(type, 0);
       setMainData(response.data);
-      setMaxLength(response.data.length);
+
+      try {
+        const response = await getMainPostLength(type);
+        setMaxLength(response.data.post_count);
+      } catch (error) {
+        alert(error);
+      }
+
     } catch (error) {
       alert(error);
     }
@@ -94,7 +108,7 @@ function Main() {
     setPageIndex(index);
     window.scrollTo({ top: 0 });
     try {
-      const response = await getMainPost(activeButton, index * 20);
+      const response = await getMainPost(activeButton, index);
       setMainData(response.data);
     } catch (error) {
       alert(error);
@@ -128,7 +142,7 @@ function Main() {
         }
 
         <PageButton onClick={() => pageIndex < totalPageIndex && handleChangePaginationIndex(pageIndex + 1)}>
-          <Image src={arrowNext} width={24} style={{ opacity: pageIndex === totalPageIndex && 0.4 }} />
+          <Image src={arrowNext} width={24} style={{ opacity: (pageIndex === totalPageIndex || totalPageIndex <= 0 ) && 0.4 }} />
         </PageButton>
       </Row>
     )
