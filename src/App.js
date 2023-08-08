@@ -8,7 +8,7 @@ import { AppProvider } from 'context/AppContext';
 import Layout from 'components/Layout';
 
 //Pages
-import Home from 'pages/Home';
+import Main from 'pages/Main';
 import Post from 'pages/Post';
 import Write from 'pages/Write';
 import Notice from 'pages/Notice';
@@ -51,7 +51,7 @@ function App() {
           <BrowserRouter>
             <Layout>
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Main />} />
                 <Route path="/post" element={<Post />} />
                 <Route path="/write" element={<Write />} />
                 <Route path="/notice" element={<Notice />} />

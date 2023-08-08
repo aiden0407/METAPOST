@@ -25,7 +25,7 @@ import writeIcon from 'assets/icons/write.svg';
 
 import mainBanner1 from 'assets/images/main_banner1.png';
 
-function Home() {
+function Main() {
 
   const navigate = useNavigate();
   const [mainData, setMainData] = useState();
@@ -205,7 +205,7 @@ function Home() {
   );
 }
 
-export default Home;
+export default Main;
 
 const HomeContainer = styled.div`
   width: 100%;
