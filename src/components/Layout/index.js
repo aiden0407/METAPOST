@@ -117,7 +117,7 @@ const BodyWrapper = styled.div`
 const FooterContainer = styled.footer`
   margin-top: 64px;
   width: 100%;
-  height: 270px;
+  height: 230px;
   background: #FFFFFF;
   display: flex;
   justify-content: center;
