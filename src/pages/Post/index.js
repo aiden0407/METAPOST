@@ -340,10 +340,12 @@ function Post() {
           <Row
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              if (postDetail.detail[0]?.user_id === loginData.user.id) {
-                navigate(`/profile`)
+              if (postDetail.detail[0]?.user_id === loginData?.user?.id) {
+                navigate(`/profile`);
+                window.scrollTo({ top: 0 });
               } else {
-                navigate(`/profile?profile_id=${postDetail.detail[0]?.user_id}`)
+                navigate(`/profile?profile_id=${postDetail.detail[0]?.user_id}`);
+                window.scrollTo({ top: 0 });
               }
             }}
           >
