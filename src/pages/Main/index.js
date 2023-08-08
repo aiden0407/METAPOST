@@ -105,11 +105,11 @@ function Main() {
   };
 
   const handleChangePaginationIndex = async function (index) {
-    setPageIndex(index);
-    window.scrollTo({ top: 0 });
     try {
       const response = await getMainPost(activeButton, index);
       setMainData(response.data);
+      setPageIndex(index);
+      window.scrollTo({ top: 0 });
     } catch (error) {
       alert(error);
     }
