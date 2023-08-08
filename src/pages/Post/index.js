@@ -301,7 +301,7 @@ function Post() {
             }}
             style={{ maxWidth: '100%', cursor: 'pointer' }}
           >
-            <Image src={postDetail.detail[0]?.community_logo_url ?? defaultCommunity} width={16} borderRadius="2px" onError={handleProfileImageError} />
+            <Image src={postDetail.detail[0]?.community_logo_url ?? defaultCommunity} width={16} height={16} borderRadius="2px" onError={handleProfileImageError} />
             <Text B3 medium color={COLOR.N700} marginLeft={8} style={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>{postDetail.detail[0].community_title}</Text>
           </Row>
         }
