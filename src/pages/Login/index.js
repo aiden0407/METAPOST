@@ -37,6 +37,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
+  const [isMobileConnectButtonClicked, setIsMobileConnectButtonClicked] = useState(false);
 
   useEffect(() => {
     for (const key in localStorage) {
@@ -61,18 +62,26 @@ function Login() {
     }
   }
 
-  const { open } = useWeb3Modal();
-  const { address, isConnected } = useAccount()
+  const { isOpen, open } = useWeb3Modal();
+  const { address, isConnecting, isConnected } = useAccount()
   function handleWalletConnect() {
     if(!isConnected){
       open();
     }
   }
   useEffect(() => {
+    if(isConnecting && !isOpen) {
+      if(isMobileConnectButtonClicked){
+        window.location.reload();
+      } else {
+        setIsMobileConnectButtonClicked(true);
+      }
+    }
+
     if(isConnected) {
       handleSignInByWallet(address);
     }
-  }, [isConnected]);
+  }, [isOpen, isConnecting, isConnected]);
 
   async function connectWallet() {
     let web3Modal = new Web3Modal({
