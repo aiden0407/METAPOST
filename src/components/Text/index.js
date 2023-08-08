@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { TYPOGRAPHY } from 'constants/design';
 
 function fontWeightSelector(bold, medium){
-  if(bold) return 'font-weight: 700; line-height: 100%;';    
-  if(medium) return 'font-weight: 500; line-height: 100%;';
+  if(bold) return 'font-weight: 700; line-height: 120%;';    
+  if(medium) return 'font-weight: 500; line-height: 120%;';
   return 'font-weight: 400; line-height: 150%;';
 }
 
