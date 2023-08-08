@@ -175,7 +175,7 @@ function Profile() {
             </ExpandButton>
           </>
           : <NoContentsWrapper>
-            <Text H5 color={COLOR.N700} marginTop={32}>The registered community does not exist</Text>
+            <Text H5 color={COLOR.N700} marginTop={32}>Registered community does not exist</Text>
           </NoContentsWrapper>
       }
 
