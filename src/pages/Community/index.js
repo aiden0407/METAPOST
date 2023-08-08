@@ -90,7 +90,7 @@ function Community() {
       setCommunityData(response.data);
       setIsCommunityOfficial(response.data?.isOfficial);
       setPostData(response.data.posts);
-      setMaxLength(response.data.posts?.length);
+      setMaxLength(response.data.post_count);
     } catch (error) {
       alert(error);
     }
@@ -102,7 +102,7 @@ function Community() {
     try {
       const response = await getCommunityInfo(loginData.token.access, communityId, type, 0);
       setPostData(response.data.posts);
-      setMaxLength(response.data.posts?.length);
+      setMaxLength(response.data.post_count);
     } catch (error) {
       alert(error);
     }
@@ -120,7 +120,7 @@ function Community() {
     window.scrollTo({ top: 0 });
     setPageIndex(index);
     try {
-      const response = await getCommunityInfo(loginData.token.access, communityId, activeButton, index * 20);
+      const response = await getCommunityInfo(loginData.token.access, communityId, activeButton, index);
       setPostData(response.data.posts);
     } catch (error) {
       alert(error);
