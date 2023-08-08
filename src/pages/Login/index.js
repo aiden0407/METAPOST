@@ -37,7 +37,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [isRememberChecked, setIsRememberChecked] = useState(false);
   const [isWalletClicked, setIsWalletClicked] = useState(false);
-  const [isMobileConnectButtonClicked, setIsMobileConnectButtonClicked] = useState(false);
+  const [isConnectButtonClicked, setIsConnectButtonClicked] = useState(false);
 
   useEffect(() => {
     for (const key in localStorage) {
@@ -53,32 +53,33 @@ function Login() {
     }
   }, [location]);
 
+  const { isOpen, open } = useWeb3Modal();
+  const { address, isConnecting, isConnected } = useAccount()
+
   function handleWalletClick() {
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobileDevice) {
-      handleWalletConnect();
+      open();
     } else {
       setIsWalletClicked(true);
     }
   }
 
-  const { isOpen, open } = useWeb3Modal();
-  const { address, isConnecting, isConnected } = useAccount()
-  function handleWalletConnect() {
-    if(!isConnected){
-      open();
-    }
-  }
   useEffect(() => {
+
     if(isConnecting && !isOpen) {
-      if(isMobileConnectButtonClicked){
+      if(isConnectButtonClicked){
         window.location.reload();
       } else {
-        setIsMobileConnectButtonClicked(true);
+        setIsConnectButtonClicked(true);
       }
     }
 
-    if(isConnected) {
+    if(!isConnectButtonClicked && isConnected) {
+      window.location.reload();
+    }
+
+    if(isConnectButtonClicked && isConnected) {
       handleSignInByWallet(address);
     }
   }, [isOpen, isConnecting, isConnected]);
@@ -215,7 +216,7 @@ function Login() {
               <Image src={coinbaseIcon} width={24} />
               <Text B1 medium marginLeft={8}>Coinbase Wallet</Text>
             </StyledRow>
-            <StyledRow onClick={() => handleWalletConnect()}>
+            <StyledRow onClick={() => open()}>
               <Image src={walletConnectIcon} width={24} />
               <Text B1 medium marginLeft={8}>WalletConnect</Text>
             </StyledRow>
