@@ -117,11 +117,11 @@ function Community() {
   }
 
   const handleChangePaginationIndex = async function (index) {
-    window.scrollTo({ top: 0 });
-    setPageIndex(index);
     try {
       const response = await getCommunityInfo(loginData.token.access, communityId, activeButton, index);
       setPostData(response.data.posts);
+      setPageIndex(index);
+      window.scrollTo({ top: 0 });
     } catch (error) {
       alert(error);
     }
