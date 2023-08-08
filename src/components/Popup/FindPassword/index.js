@@ -25,8 +25,9 @@ function FindPassword() {
     }
 
     try {
-      const response = await findPassword(email);
+      await findPassword(email);
       alert('Email has been sent');
+      dispatch({ type: 'CLOSE_FIND_PASSWORD_POPUP' });
     } catch (error) {
       alert(error);
     }
