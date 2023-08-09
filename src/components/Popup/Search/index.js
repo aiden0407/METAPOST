@@ -60,6 +60,10 @@ function Search() {
     }
   };
 
+  function removeTags(html) {
+    return html.replace(/<\/?[^>]+(>|$)/g, " ");
+  }
+
   const handleImageError = (error) => {
     error.target.src = defaultProfile;
   }
@@ -141,15 +145,14 @@ function Search() {
                           searchResult.map((item) =>
                             <StyledColumn
                               key={`post_${item.pk}`}
-                              gap={4}
                               onClick={() => {
                                 navigate(`/post?post_id=${item.pk}`);
                                 window.scrollTo({ top: 0 });
                                 handleSearchClose();
                               }}
                             >
-                              <Text B0 color={COLOR.N800}>{item.fields.title}</Text>
-                              <Text B0 color={COLOR.N600}>{item.fields.description}</Text>
+                              <StyledText B0 color={COLOR.N800}>{item.fields.title}</StyledText>
+                              <StyledText B0 color={COLOR.N600}>{removeTags(item.fields.description)}</StyledText>
                             </StyledColumn>
                           )
                         }
@@ -283,6 +286,8 @@ const ResultWrapper = styled.div`
   background-color: #FFFFFF;
   display: flex;
   justify-content: center;
+  overflow: hidden;
+  overflow-y: scroll;
 `
 
 const ResultColumnCommunity = styled.div`
@@ -335,6 +340,14 @@ const TapRow = styled(Row)`
   border-bottom: ${(props) => props.selected ? `2px solid ${COLOR.BLUE2}` : `1px solid ${COLOR.N400}`};
   background-color: #FFFFFF;
   cursor: pointer;
+`
+
+const StyledText = styled(Text)`
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${props => (props.expanded ? 'unset' : '1')};
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const StyledRow = styled(Row)`
