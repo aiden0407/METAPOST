@@ -4,7 +4,7 @@ METAPOST는 NFT 소유자들을 위한 웹 커뮤니티 페이지입니다.
 
 ## METAPOST 프로덕트 문서
 
-[포트폴리오 노션 페이지](https://aiden0407.notion.site/METAPOST-3034a3e9485a4f6bbd442f551871a203?pvs=4)
+[포트폴리오 노션 페이지](https://aiden0407.notion.site/METAPOST-aadbec2d1fab45acaf11e0db0131d253)
 
 ## METAPOST 기능
 
