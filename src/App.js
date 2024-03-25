@@ -51,23 +51,17 @@ function App() {
     <AuthProvider>
       <AppProvider>
         <WagmiConfig config={wagmiConfig}>
-          <BrowserRouter>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Layout>
               <Routes>
-                <Route path="/METAPOST" element={<Main />} />
+                <Route path="/" element={<Main />} />
                 <Route path="/post" element={<Post />} />
                 <Route path="/write" element={<Write />} />
                 <Route path="/notice" element={<Notice />} />
 
-                <Route path="/METAPOST/login" element={<Login />} />
-                <Route
-                  path="/METAPOST/signup/email"
-                  element={<SignUpEmail />}
-                />
-                <Route
-                  path="/METAPOST/signup/wallet"
-                  element={<SignUpWallet />}
-                />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup/email" element={<SignUpEmail />} />
+                <Route path="/signup/wallet" element={<SignUpWallet />} />
 
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/settings" element={<ProfileSettings />} />

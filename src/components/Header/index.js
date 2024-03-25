@@ -57,7 +57,6 @@ function Header() {
         }
       } else {
         switch (location.pathname) {
-          case "/write":
           case "/profile/settings":
           case "/community":
           case "/community/create":
@@ -74,7 +73,7 @@ function Header() {
   }, [location.pathname, dispatch, navigate, loginData]);
 
   function handleNavigateHome() {
-    navigate("/METAPOST");
+    navigate("/");
     window.scrollTo({ top: 0 });
   }
 
@@ -85,7 +84,7 @@ function Header() {
   }
 
   function handleNavigateJoin() {
-    navigate("/METAPOST/login");
+    navigate("/login");
   }
 
   function handleProfileMenu() {

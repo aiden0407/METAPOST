@@ -146,7 +146,7 @@ function Login() {
       }
       navigate("/");
     } catch (error) {
-      navigate(`/METAPOST/signup/wallet?wallet_address=${address}`);
+      navigate(`/signup/wallet?wallet_address=${address}`);
     }
   };
 
@@ -155,7 +155,7 @@ function Login() {
   }
 
   function handleNavigateSignUpEmail() {
-    navigate("/METAPOST/signup/email");
+    navigate("/signup/email");
   }
 
   return (

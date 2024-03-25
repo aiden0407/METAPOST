@@ -25,9 +25,9 @@ function Layout({ children }) {
 
   const handleChangeColor = (value) => {
     switch (value) {
-      case "/METAPOST/login":
-      case "/METAPOST/signup/email":
-      case "/METAPOST/signup/wallet":
+      case "/login":
+      case "/signup/email":
+      case "/signup/wallet":
         return "#FFFFFF";
 
       default:
@@ -37,9 +37,9 @@ function Layout({ children }) {
 
   const handleFooter = (value) => {
     switch (value) {
-      case "/METAPOST/login":
-      case "/METAPOST/signup/email":
-      case "/METAPOST/signup/wallet":
+      case "/login":
+      case "/signup/email":
+      case "/signup/wallet":
       case "/search":
       case "/profile/settings":
       case "/community/create":
