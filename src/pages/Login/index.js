@@ -85,7 +85,7 @@ function Login() {
     }
   }, [isOpen, isConnecting, isConnected]);
 
-  async function connectWallet() {
+  async function connectWallet(type) {
     let web3Modal = new Web3Modal({
       cacheProvider: false,
     });
@@ -98,6 +98,18 @@ function Login() {
     } catch (error) {
       if (error === "Modal closed by user") {
         alert("To use this wallet, extension must be installed");
+        if (type === "META_MASK") {
+          window.open(
+            "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1",
+            "_blank"
+          );
+        }
+        if (type === "COINBASE") {
+          window.open(
+            "https://chromewebstore.google.com/detail/coinbase-wallet-extension/hnfanknocfeofbddgcijnmhnfnkdnaad",
+            "_blank"
+          );
+        }
       }
       console.log(error);
     }
@@ -217,13 +229,13 @@ function Login() {
 
       {isWalletClicked ? (
         <ToggleMenu>
-          <StyledRow onClick={connectWallet}>
+          <StyledRow onClick={() => connectWallet("META_MASK")}>
             <Image src={metaMaskIcon} width={24} />
             <Text B1 medium marginLeft={8}>
               MetaMask
             </Text>
           </StyledRow>
-          <StyledRow onClick={connectWallet}>
+          <StyledRow onClick={() => connectWallet("COINBASE")}>
             <Image src={coinbaseIcon} width={24} />
             <Text B1 medium marginLeft={8}>
               Coinbase Wallet
